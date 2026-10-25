@@ -1854,8 +1854,9 @@ public final class MainActivity extends Activity {
                     : R.string.catalog_status_no_matches);
         } else if (state.hasMore()
                 && episodeCount >= SecurityLimits.CATALOG_BROWSE_VISIBLE_EPISODE_LIMIT) {
-            catalogStatus.setText(getString(
-                    R.string.catalog_status_visible_limit,
+            catalogStatus.setText(getResources().getQuantityString(
+                    R.plurals.catalog_status_visible_limit,
+                    SecurityLimits.CATALOG_BROWSE_VISIBLE_EPISODE_LIMIT,
                     SecurityLimits.CATALOG_BROWSE_VISIBLE_EPISODE_LIMIT));
         } else {
             catalogStatus.setText(getResources().getQuantityString(

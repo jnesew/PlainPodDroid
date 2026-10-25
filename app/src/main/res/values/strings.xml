@@ -161,7 +161,10 @@
         <item quantity="one">Showing %1$d episode summary.</item>
         <item quantity="other">Showing %1$d episode summaries.</item>
     </plurals>
-    <string name="catalog_status_visible_limit">Showing the first %1$d episode summaries. The screen limit prevents an oversized View hierarchy.</string>
+    <plurals name="catalog_status_visible_limit">
+        <item quantity="one">Showing the first %1$d episode. Use search or filters to narrow the list.</item>
+        <item quantity="other">Showing the first %1$d episodes. Use search or filters to narrow the list.</item>
+    </plurals>
     <string name="catalog_error_load">The saved library could not be read. No network request or catalog change was attempted.</string>
     <string name="catalog_error_selection">That subscription is no longer available. Refresh the library.</string>
     <string name="catalog_error_background">Background work is unavailable. Close and reopen the screen.</string>

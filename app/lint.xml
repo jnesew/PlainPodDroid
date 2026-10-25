@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!-- Android 13+ opt-in. MainActivity guards callback registration and keeps
+         onBackPressed as the API 29-32 fallback; older Android ignores the flag. -->
+    <issue id="UnusedAttribute">
+        <ignore regexp="Attribute `enableOnBackInvokedCallback` is only used in API level 33 and higher \(current min is 29\)" />
+    </issue>
+</lint>
