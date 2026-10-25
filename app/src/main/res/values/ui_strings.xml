@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="ui_downloads_queued_partial"><item quantity="one">Queued %1$d of %2$d download.</item><item quantity="other">Queued %1$d of %2$d downloads.</item></plurals>
+    <string name="ui_pending_downloads">Download requests</string>
+    <string name="ui_download_waiting">Queued for download</string>
+    <string name="ui_downloading">Downloading</string>
+    <string name="ui_download_failed">Download failed</string>
+    <string name="ui_download_no_space">Not enough download space</string>
+    <string name="ui_retry_download_title">Retry download: %s</string>
+    <string name="ui_cancel_download_title">Cancel download: %s</string>
+    <string name="ui_remove_download_request">Remove request: %s</string>
+    <string name="ui_retry_download">Retry download</string>
+    <string name="ui_download_queued_title">Queued: %s</string>
+    <string name="ui_download_start_failed">Couldn’t start downloads.</string>
+    <string name="ui_download_load_failed">Couldn’t load download requests.</string>
+
+    <string name="ui_select_episode">Select %s</string>
+    <string name="ui_select_episodes">Select episodes</string>
+    <plurals name="ui_selection_limit"><item quantity="one">Select up to %1$d episode.</item><item quantity="other">Select up to %1$d episodes.</item></plurals>
+    <string name="ui_mark_all_played">Mark all played</string>
+    <string name="ui_mark_older_played">Mark older episodes played</string>
+    <string name="ui_no_episode_date">No publication date available.</string>
+    <string name="ui_no_unplayed_episodes">No unplayed episodes.</string>
+    <string name="ui_batch_failed">Couldn’t update the selected episodes.</string>
+    <plurals name="ui_batch_result"><item quantity="one">Updated %1$d of %2$d episode.</item><item quantity="other">Updated %1$d of %2$d episodes.</item></plurals>
+    <plurals name="ui_selected_count"><item quantity="one">%d selected</item><item quantity="other">%d selected</item></plurals>
+    <plurals name="ui_confirm_mark_played"><item quantity="one">Mark %d episode played?</item><item quantity="other">Mark %d episodes played?</item></plurals>
+    <plurals name="ui_confirm_mark_unplayed"><item quantity="one">Mark %d episode unplayed and reset its progress?</item><item quantity="other">Mark %d episodes unplayed and reset their progress?</item></plurals>
+    <plurals name="ui_batch_marked_played"><item quantity="one">Marked %d episode played.</item><item quantity="other">Marked %d episodes played.</item></plurals>
+    <plurals name="ui_batch_marked_unplayed"><item quantity="one">Marked %d episode unplayed.</item><item quantity="other">Marked %d episodes unplayed.</item></plurals>
+    <plurals name="ui_batch_queued"><item quantity="one">Added %d episode to queue.</item><item quantity="other">Added %d episodes to queue.</item></plurals>
+    <plurals name="ui_batch_downloads"><item quantity="one">Queued %d download.</item><item quantity="other">Queued %d downloads.</item></plurals>
+    <string name="ui_podcast_speed">Podcast speed</string>
+    <string name="ui_use_default_speed">Use default (%s)</string>
+    <string name="ui_new_episodes">New episodes</string>
+    <string name="ui_in_progress">In progress</string>
+    <string name="ui_empty_new_episodes">You’re up to date.</string>
+    <string name="ui_empty_in_progress">No unfinished episodes.</string>
+    <string name="ui_sort_podcasts">Sort podcasts</string>
+    <string name="ui_sort_episodes">Episode order</string>
+    <string name="ui_latest_episode">Latest episode</string>
+    <string name="ui_name">Name</string>
+    <string name="ui_newest_first">Newest first</string>
+    <string name="ui_oldest_first">Oldest first</string>
+    <string name="ui_preference_save_failed">Couldn’t save preference.</string>
+    <plurals name="ui_new_count"><item quantity="one">%d new</item><item quantity="other">%d new</item></plurals>
+    <plurals name="ui_unplayed_count"><item quantity="one">%d unplayed</item><item quantity="other">%d unplayed</item></plurals>
+    <string name="ui_podcasts">Podcasts</string>
+    <string name="ui_episodes">Episodes</string>
+    <string name="ui_episode">Episode</string>
+    <string name="ui_downloads">Downloads</string>
+    <string name="ui_queue">Queue</string>
+    <string name="ui_favorites">Favorites</string>
+    <string name="ui_history">History</string>
+    <string name="ui_archives">Archived podcasts</string>
+    <string name="ui_settings">Settings</string>
+    <string name="ui_about">About</string>
+    <string name="ui_add_podcast">Add podcast</string>
+    <string name="ui_navigation">Open navigation</string>
+    <string name="ui_close_navigation">Close navigation</string>
+    <string name="ui_back">Back</string>
+    <string name="ui_more">More options</string>
+    <string name="ui_search">Search podcasts</string>
+    <string name="ui_all">All</string>
+    <string name="ui_unplayed">Unplayed</string>
+    <string name="ui_downloaded">Downloaded</string>
+    <string name="ui_about_episode">About this episode</string>
+    <string name="ui_seek">Playback position</string>
+    <string name="ui_play">Play</string>
+    <string name="ui_pause">Pause</string>
+    <string name="ui_previous">Previous</string>
+    <string name="ui_next">Next</string>
+    <string name="ui_loading">Loading…</string>
+    <string name="ui_empty_podcasts">Your podcasts will appear here. Add a feed URL or import OPML to get started.</string>
+    <string name="ui_empty_archives">No archived podcasts.</string>
+    <string name="ui_empty_downloads">No completed downloads yet.</string>
+    <string name="ui_empty_favorites">Favorite an episode to find it here.</string>
+    <string name="ui_empty_history">Your listening history will appear here.</string>
+    <string name="ui_load_failed">Could not load saved episodes. Try refreshing this view.</string>
+    <string name="ui_unknown_download_time">Earlier downloads · date unknown</string>
+    <string name="ui_today">Today</string>
+    <string name="ui_yesterday">Yesterday</string>
+    <string name="ui_reorder">Reorder %1$s. Drag or use the move menu.</string>
+    <string name="ui_playback_options">Playback speed and sleep timer</string>
+    <string name="ui_podcast_options">Podcast settings</string>
+    <string name="ui_play_failed">Episode playback is unavailable.</string>
+    <string name="ui_row_options">Options for %1$s</string>
+    <plurals name="ui_subscription_count">
+        <item quantity="one">%1$d subscription</item>
+        <item quantity="other">%1$d subscriptions</item>
+    </plurals>
+    <plurals name="ui_podcast_counts">
+        <item quantity="one">%1$d episode · %2$d unplayed</item>
+        <item quantity="other">%1$d episodes · %2$d unplayed</item>
+    </plurals>
+    <string name="ui_episode_information">Episode information</string>
+    <string name="ui_podcast_information">Podcast information</string>
+    <string name="ui_pull_refresh">Pull to refresh</string>
+    <string name="ui_release_refresh">Release to refresh</string>
+    <string name="ui_favorited">In favorites</string>
+    <string name="ui_not_favorited">Not in favorites</string>
+    <string name="ui_playback_info">Playback details</string>
+    <string name="ui_playback_info_text" formatted="false">Offline mode stops streaming, downloads, feed refresh, Apple Podcasts lookups, cover updates and chapter requests. Downloaded episodes, saved information and cached covers remain available. Background updates resume after you turn it off.\n\nWhen enabled, automatic deletion removes played downloads when playback ends or advances to the next episode. Favorites, queued episodes, archives and files in use are kept. Skipping or manually marking an episode played does not delete its audio. The episode stays in your library.\n\nNear the end marks an episode played after at least 5 minutes, once 95% has played or 2 minutes remain.</string>
+    <string name="ui_time_minutes">%1$dm</string>
+    <string name="ui_time_hours">%1$dh</string>
+    <string name="ui_time_hours_minutes">%1$dh %2$dm</string>
+    <string name="ui_time_less_minute">&lt;1m</string>
+    <string name="ui_time_left">%1$s left</string>
+    <string name="ui_time_listened">%1$s listened</string>
+    <string name="ui_title_count">%1$s · %2$d</string>
+    <string name="ui_page_number">Page %1$d of %2$d</string>
+    <string name="ui_page_current">Page %1$d</string>
+    <string name="ui_no_matching_podcasts">No podcasts found.</string>
+    <string name="ui_drag_started">Moving %1$s</string>
+    <string name="ui_drag_dropped">Moved to position %1$d</string>
+    <string name="ui_feed_address_hint">https://…</string>
+    <string name="ui_opml_refresh_notice">Refresh to load their episodes.</string>
+    <string name="ui_import_details">Import details</string>
+    <string name="ui_opml_invalid_details">Skipped entries could not be read as valid HTTPS podcast feed links.</string>
+    <string name="ui_opml_over_limit">Subscription limit: %1$d. Choose a smaller import.</string>
+    <string name="ui_import_export">Import / export</string>
+    <plurals name="ui_import_count"><item quantity="one">Import %d podcast</item><item quantity="other">Import %d podcasts</item></plurals>
+    <plurals name="ui_import_added"><item quantity="one">%d podcast imported. Refresh to load its episodes.</item><item quantity="other">%d podcasts imported. Refresh to load their episodes.</item></plurals>
+    <plurals name="ui_import_podcasts"><item quantity="one">%d podcast</item><item quantity="other">%d podcasts</item></plurals>
+    <plurals name="ui_import_duplicates"><item quantity="one">%d duplicate</item><item quantity="other">%d duplicates</item></plurals>
+    <plurals name="ui_import_invalid"><item quantity="one">%d invalid link</item><item quantity="other">%d invalid links</item></plurals>
+    <plurals name="ui_preview_episodes"><item quantity="one">%d episode</item><item quantity="other">%d episodes</item></plurals>
+    <plurals name="ui_preview_unavailable"><item quantity="one">%d unavailable</item><item quantity="other">%d unavailable</item></plurals>
+    <plurals name="ui_refresh_failed"><item quantity="one">%d podcast couldn’t refresh · Details</item><item quantity="other">%d podcasts couldn’t refresh · Details</item></plurals>
+    <string name="ui_refresh_details">Refresh details</string>
+    <string name="ui_refresh_failure_item">%1$s — %2$s</string>
+    <string name="ui_refresh_fetch_failed">Couldn’t connect</string>
+    <string name="ui_refresh_invalid_feed">Couldn’t read feed</string>
+    <string name="ui_refresh_storage_failed">Couldn’t save episodes</string>
+    <string name="ui_refresh_already_running">Already refreshing</string>
+    <string name="ui_refresh_removed">No longer subscribed</string>
+    <string name="ui_removed_podcast">Removed podcast</string>
+    <string name="ui_retry">Retry</string>
+    <string name="ui_close_search">Close search</string>
+    <string name="login_required">Requires login</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="login_audio_scope">Audio login address (optional)</string>
+    <string name="login_audio_hint">https://audio.example.com/</string>
+    <string name="login_audio_help">Use this only if audio needs the same login outside the feed’s folder.</string>
+    <string name="login_keep_password">Leave blank to keep password</string>
+    <string name="login_invalid">Check your username, password and HTTPS audio address. Audio addresses must end in /.</string>
+    <string name="login_saved">Login updated.</string>
+    <string name="login_unavailable">Re-enter your login.</string>
+    <string name="login_save_failed">Couldn’t save login. Try again.</string>
+    <string name="login_needed">Check the podcast login or private feed link.</string>
+    <string name="login_denied">Access denied. Check your login or private feed link.</string>
+    <string name="login_save">Save</string>
+</resources>
+
+
+

@@ -1,0 +1,20 @@
+<p>Podcasts, kept simple. PlainPodDroid is a native audio podcast player for Android 10 and newer, including GrapheneOS, without Google Play Services.</p>
+
+<ul>
+<li>Follow shows using HTTPS RSS feeds or Apple Podcasts links, and import or export subscriptions with OPML.</li>
+<li>Build a listening queue, save favorites and return to unfinished episodes.</li>
+<li>Stream audio or download episodes for later, with storage limits and automatic cleanup.</li>
+<li>Use chapters, per-show playback speed, a sleep timer and adjustable skip controls.</li>
+<li>Schedule feed refreshes and downloads for selected days and times.</li>
+<li>Enable Download before playing to acquire complete audio before listening.</li>
+<li>Turn on Offline mode to stop all app networking while keeping downloaded audio, your library and cached artwork available.</li>
+<li>Choose light or dark appearance.</li>
+</ul>
+
+<p>No app account, analytics, advertising SDK, telemetry or cloud sync. Your library stays on your device. Podcast publishers may include advertising in their audio.</p>
+
+<p>Add a feed from a source you trust: there is no podcast directory or recommendation service. Supported private feeds can use scoped HTTPS Basic login. Apple Podcasts links use a bounded Apple lookup to find the RSS feed.</p>
+
+<p>When online, the app connects to your feeds and their artwork, chapter and audio hosts. Progressive HTTPS audio is supported; video, livestreams and platform-exclusive shows without an accessible feed are outside its scope.</p>
+
+<p>Screenshots show fictional podcasts and original demonstration artwork. No publisher affiliation is implied.</p>

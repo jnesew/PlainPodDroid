@@ -1,0 +1,13 @@
+<resources>
+    <item name="episode_row_body" type="id" />
+    <item name="episode_row_play" type="id" />
+    <item name="episode_row_grip" type="id" />
+    <item name="episode_row_menu" type="id" />
+    <item type="id" name="episode_row_played" />
+    <item type="id" name="episode_row_downloaded" />
+    <item type="id" name="episode_row_progress" />
+    <item name="login_enabled" type="id" />
+    <item name="login_username" type="id" />
+    <item name="login_password" type="id" />
+    <item name="login_audio_scope" type="id" />
+</resources>

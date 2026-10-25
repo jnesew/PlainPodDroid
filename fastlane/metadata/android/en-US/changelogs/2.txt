@@ -1,0 +1,1 @@
+First release candidate: RSS and Apple-link subscriptions, OPML, streaming and downloads, queue, favorites, chapters, playback speed, sleep timer and scheduled preparation. Offline mode stops all app networking. Includes hostile-input fixes and updated HTTP client security protections.

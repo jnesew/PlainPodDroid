@@ -1,0 +1,24 @@
+Categories:
+  - Multimedia
+License: MIT
+AuthorName: jnesew
+SourceCode: https://github.com/jnesew/PlainPodDroid
+IssueTracker: https://github.com/jnesew/PlainPodDroid/issues
+Changelog: https://github.com/jnesew/PlainPodDroid/blob/main/CHANGELOG.md
+RepoType: git
+Repo: https://github.com/jnesew/PlainPodDroid.git
+Disabled: Awaiting the first public release and F-Droid maintainer review
+MaintainerNotes: |-
+  Upstream listing text and screenshots are in fastlane/metadata/android/en-US.
+  Release preparation generates a build entry pinned to its exact source commit.
+  The Gradle properties file owns versionName/versionCode.
+  Build requirements: JDK 17, Platform 37.0, Build Tools 36.0.0, Gradle 9.6.0.
+  APK output is unsigned; no signing configuration or Google services are needed.
+  Upstream developer-signature reuse requires independent reproducible-build
+  verification and a real AllowedAPKSigningKeys fingerprint before submission.
+Builds: []
+AutoUpdateMode: None
+UpdateCheckMode: 'Tags ^v[0-9]+\.[0-9]+\.[0-9]+$'
+UpdateCheckData: 'gradle.properties|plainPodDroidVersionCode=([0-9]+)|.|plainPodDroidVersionName=(.*)'
+CurrentVersion: 1.0.0-rc.1
+CurrentVersionCode: 2

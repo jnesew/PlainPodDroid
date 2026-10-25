@@ -1,0 +1,63 @@
+require "shellwords"
+
+opt_out_usage
+ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
+default_platform(:android)
+ROOT = File.expand_path("..", __dir__)
+
+def local_command(*arguments)
+  Dir.chdir(ROOT) do
+    UI.user_error!("Local command failed") unless system(*arguments)
+  end
+end
+
+def required_option(options, name)
+  value = options[name]
+  UI.user_error!("Provide #{name}:VALUE") if value.nil? || value.to_s.empty?
+  value.to_s
+end
+
+platform :android do
+  desc "Check local Fastlane/F-Droid listing metadata"
+  lane :metadata do
+    local_command("python3", "tools/verify-metadata.py")
+  end
+
+  desc "Build and verify a clean committed unsigned release candidate"
+  lane :prepare do |options|
+    arguments = ["bash", "tools/prepare-release.sh", "--output", required_option(options, :output)]
+    arguments += ["--sdk", options[:sdk]] if options[:sdk]
+    arguments << "--offline" if options[:offline].to_s == "true"
+    local_command(*arguments)
+  end
+
+  desc "Sign an approved candidate interactively with an existing external key"
+  lane :sign do |options|
+    arguments = ["bash", "tools/sign-release-apk.sh"]
+    {input: "--input", keystore: "--keystore", alias: "--alias",
+     cert_sha256: "--cert-sha256", output: "--output"}.each do |name, flag|
+      arguments += [flag, required_option(options, name)]
+    end
+    arguments += ["--sdk", options[:sdk]] if options[:sdk]
+    local_command(*arguments)
+  end
+
+  desc "Verify the signed payload and prepare a local release packet"
+  lane :package do |options|
+    arguments = ["bash", "tools/package-release.sh"]
+    {candidate: "--candidate", apk: "--apk", cert_sha256: "--cert-sha256",
+     output: "--output"}.each do |name, flag|
+      arguments += [flag, required_option(options, name)]
+    end
+    arguments += ["--sdk", options[:sdk]] if options[:sdk]
+    local_command(*arguments)
+  end
+
+  desc "Seed a disposable debug emulator for original demonstration screenshots"
+  lane :screenshots do |options|
+    arguments = ["python3", "tools/screenshot-demo.py", "--serial", required_option(options, :serial)]
+    arguments += ["--theme", options[:theme]] if options[:theme]
+    arguments << "--offline" if options[:offline].to_s == "true"
+    local_command(*arguments)
+  end
+end

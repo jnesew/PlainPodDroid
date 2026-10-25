@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <Button
+            android:id="@+id/about_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/about_close" android:textAllCaps="false" style="@style/Widget.PlainPod.Button" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:accessibilityHeading="true"
+            android:text="@string/about_heading"
+            android:textAppearance="@android:style/TextAppearance.Material.Headline"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/about_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@android:style/TextAppearance.Material.Body1"
+            android:textColor="@color/text_secondary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:accessibilityHeading="true"
+            android:text="@string/about_privacy_heading"
+            android:textAppearance="@android:style/TextAppearance.Material.Title"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/about_privacy_statement"
+            android:textAppearance="@android:style/TextAppearance.Material.Body1"
+            android:textColor="@color/text_secondary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:accessibilityHeading="true"
+            android:text="@string/about_license_heading"
+            android:textAppearance="@android:style/TextAppearance.Material.Title"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/about_license_status"
+            android:textAppearance="@android:style/TextAppearance.Material.Body1"
+            android:textColor="@color/text_secondary" />
+
+        <Button android:id="@+id/about_app_license" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_marginTop="12dp" android:minHeight="48dp"
+            android:text="@string/about_app_license" style="@style/Widget.PlainPod.Button" android:textAllCaps="false" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:accessibilityHeading="true"
+            android:text="@string/about_dependencies_heading"
+            android:textAppearance="@android:style/TextAppearance.Material.Title"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/about_dependencies"
+            android:textAppearance="@android:style/TextAppearance.Material.Body1"
+            android:textColor="@color/text_secondary" />
+        <Button android:id="@+id/about_third_party_licenses" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_marginTop="12dp" android:minHeight="48dp"
+            android:text="@string/about_third_party_licenses" style="@style/Widget.PlainPod.Button" android:textAllCaps="false" />
+    </LinearLayout>
+</ScrollView>

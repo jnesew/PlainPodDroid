@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:id="@+id/app_content" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+        <LinearLayout android:id="@+id/app_toolbar" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="64dp" android:paddingStart="8dp" android:paddingEnd="8dp" android:gravity="center_vertical" android:orientation="horizontal">
+            <Button android:id="@+id/navigation_action" style="@style/Widget.PlainPod.Icon" android:layout_width="48dp" android:layout_height="48dp" android:contentDescription="@string/ui_navigation" />
+            <TextView android:id="@+id/destination_title" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:paddingStart="12dp" android:paddingEnd="0dp" android:text="@string/ui_podcasts" android:textSize="22sp" android:textStyle="bold" android:textColor="@color/text_primary" android:accessibilityHeading="true" />
+            <Button android:id="@+id/episode_favorite_action" style="@style/Widget.PlainPod.Icon" android:layout_width="48dp" android:layout_height="48dp" android:visibility="gone" />
+            <Button android:id="@+id/episode_queue_header" style="@style/Widget.PlainPod.Icon" android:layout_width="48dp" android:layout_height="48dp" android:visibility="gone" android:contentDescription="@string/ui_queue" />
+            <Button android:id="@+id/search_action" style="@style/Widget.PlainPod.Icon" android:layout_width="48dp" android:layout_height="48dp" android:contentDescription="@string/ui_search" />
+            <Button android:id="@+id/destination_overflow" style="@style/Widget.PlainPod.Icon" android:layout_width="48dp" android:layout_height="48dp" android:contentDescription="@string/ui_more" />
+        </LinearLayout>
+        <FrameLayout android:id="@+id/destination_host" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+            <include layout="@layout/screen_podcasts" />
+            <include layout="@layout/screen_podcast_episodes" />
+            <include layout="@layout/screen_downloads" />
+            <include layout="@layout/screen_queue" />
+            <include layout="@layout/screen_favorites" />
+            <include layout="@layout/screen_history" />
+            <include layout="@layout/screen_new_episodes" />
+            <include layout="@layout/screen_in_progress" />
+            <include layout="@layout/screen_archives" />
+            <include layout="@layout/screen_settings" />
+            <include layout="@layout/screen_add_podcast" />
+            <include layout="@layout/screen_episode" />
+        </FrameLayout>
+        <ProgressBar android:id="@+id/episode_download_progress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="3dp" android:visibility="gone" />
+        <TextView android:id="@+id/episode_download_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="20dp" android:paddingEnd="20dp" android:textSize="14sp" android:textColor="@color/text_secondary" android:accessibilityLiveRegion="polite" android:visibility="gone" />
+        <LinearLayout android:id="@+id/mini_player" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="92dp" android:padding="12dp" android:background="@color/surface" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone">
+            <LinearLayout android:id="@+id/mini_player_body" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="64dp" android:gravity="center_vertical" android:orientation="horizontal" android:focusable="true" android:clickable="true" android:background="?android:attr/selectableItemBackground">
+                <ImageView android:id="@+id/mini_art" android:layout_width="64dp" android:layout_height="64dp" android:background="@drawable/artwork_surface" android:src="@drawable/ic_podcast" android:scaleType="centerCrop" android:importantForAccessibility="no" />
+                <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:paddingStart="12dp" android:paddingEnd="12dp" android:orientation="vertical">
+                    <TextView android:id="@+id/mini_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:maxLines="2" android:ellipsize="end" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                    <TextView android:id="@+id/mini_podcast" android:layout_width="match_parent" android:layout_height="wrap_content" android:maxLines="1" android:ellipsize="end" android:textSize="14sp" android:textColor="@color/text_secondary" />
+                    <ProgressBar android:id="@+id/mini_progress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="4dp" android:layout_marginTop="8dp" android:max="1000" android:importantForAccessibility="no" />
+                </LinearLayout>
+            </LinearLayout>
+            <Button android:id="@+id/playback_toggle" style="@style/Widget.PlainPod.Icon" android:layout_width="52dp" android:layout_height="52dp" android:contentDescription="@string/ui_play" />
+        </LinearLayout>
+    </LinearLayout>
+    <View android:id="@+id/drawer_scrim" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#80000000" android:visibility="gone" android:focusable="true" android:clickable="true" android:contentDescription="@string/ui_close_navigation" />
+    <ScrollView android:id="@+id/navigation_drawer" android:layout_width="300dp" android:layout_height="match_parent" android:layout_gravity="start" android:background="@color/surface" android:elevation="12dp" android:visibility="gone" android:fillViewport="true">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:clickable="true">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:layout_marginBottom="28dp" android:text="@string/app_name" android:textSize="24sp" android:textStyle="bold" android:textColor="@color/text_primary" android:accessibilityHeading="true" />
+            <Button android:id="@+id/nav_podcasts" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_podcasts" android:drawableStart="@drawable/ic_podcast" />
+            <Button android:id="@+id/nav_new_episodes" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_new_episodes" android:drawableStart="@drawable/ic_podcast" />
+            <Button android:id="@+id/nav_in_progress" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_in_progress" android:drawableStart="@drawable/ic_play" />
+            <Button android:id="@+id/nav_downloads" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_downloads" android:drawableStart="@drawable/ic_download" />
+            <Button android:id="@+id/nav_queue" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_queue" android:drawableStart="@drawable/ic_queue" />
+            <Button android:id="@+id/nav_favorites" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_favorites" android:drawableStart="@drawable/ic_heart" />
+            <Button android:id="@+id/nav_history" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_history" android:drawableStart="@drawable/ic_history" />
+            <Button android:id="@+id/nav_archives" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_archives" android:drawableStart="@drawable/ic_archive" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="12dp" android:layout_marginBottom="12dp" android:background="@color/divider" />
+            <Button android:id="@+id/nav_settings" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_settings" android:drawableStart="@drawable/ic_settings" />
+            <Button android:id="@+id/nav_about" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_about" android:drawableStart="@drawable/ic_about" />
+            <Button android:id="@+id/nav_add_podcast" style="@style/Widget.PlainPod.DrawerItem" android:text="@string/ui_add_podcast" android:drawableStart="@drawable/ic_add" />
+        </LinearLayout>
+    </ScrollView>
+    <include layout="@layout/playback_options" />
+</FrameLayout>

@@ -1,0 +1,9 @@
+[
+  {
+    "id": "io.github.jnesew.plainpoddroid",
+    "url": "https://github.com/jnesew/PlainPodDroid",
+    "author": "jnesew",
+    "name": "PlainPodDroid",
+    "additionalSettings": "{\"includePrereleases\":false,\"apkFilterRegEx\":\"^PlainPodDroid-[0-9]+\\\\.[0-9]+\\\\.[0-9]+\\\\.apk$\",\"autoApkFilterByArch\":false}"
+  }
+]

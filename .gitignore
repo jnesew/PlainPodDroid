@@ -1,0 +1,51 @@
+# Local planning, handoffs, reviews, design references and scratch work
+/.private/
+
+# Local agent state
+/.codex/
+/.agents/
+
+# Local environment files; reviewed example templates may be committed
+.env
+.env.*
+!.env.example
+
+# Android/Gradle outputs
+.gradle/
+build/
+**/build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# IDE state
+.idea/
+*.iml
+
+# Signing material and local release configuration
+signing/
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pk8
+keystore.properties
+signing.local.properties
+
+# Generated artifacts
+*.apk
+*.aab
+*.idsig
+__pycache__/
+.plainpoddroid-sign.*/
+
+# OS/editor noise
+.DS_Store
+*~
+
+# Local Ruby/Fastlane tooling and generated reports
+/.bundle/
+/vendor/bundle/
+/fastlane/report.xml
+/fastlane/README.md

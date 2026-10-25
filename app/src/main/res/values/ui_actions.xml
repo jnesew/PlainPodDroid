@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="ui_artwork_binding" type="id" />
+    <item name="ui_icon_style" type="id" />
+    <item name="podcast_action_information" type="id" />
+    <item name="podcast_action_settings" type="id" />
+    <item name="podcast_action_login" type="id" />
+    <item name="podcast_action_refresh" type="id" />
+    <item name="podcast_action_archive" type="id" />
+    <item name="podcast_action_subscribe" type="id" />
+    <item name="podcast_action_delete" type="id" />
+
+    <item name="episode_row_download" type="id" />
+    <item name="episode_row_download_status" type="id" />
+    <string name="ui_download_episode">Download %1$s</string>
+    <string name="ui_cancel_queued_download">Queued: cancel download of %1$s</string>
+    <string name="ui_manage_download_title">Downloaded: manage %1$s</string>
+    <string name="ui_archive_podcast">Archive</string>
+    <string name="ui_delete_podcast">Delete podcast…</string>
+    <string name="ui_delete_archive">Delete permanently…</string>
+    <string name="ui_subscribe_again">Subscribe again</string>
+    <string name="ui_archive_title">Archive this podcast?</string>
+    <string name="ui_archive_message">Keep saved episodes and downloads. Feed refresh, streaming and new downloads stop until you subscribe again. Playback from this podcast will stop.</string>
+    <string name="ui_delete_podcast_title">Delete this podcast?</string>
+    <string name="ui_delete_podcast_message">Delete this podcast, its saved episodes and downloaded audio from this device. Playback from this podcast will stop.</string>
+    <string name="ui_work_busy">Another action is in progress. Try again when it finishes.</string>
+    <string name="ui_feed_login">Feed login…</string>
+    <string name="ui_manage_feed_login">Manage feed login…</string>
+    <string name="ui_login_required">Login required…</string>
+    <string name="ui_stop_playback">Stop playback</string>
+    <string name="ui_delete_confirm">Delete</string>
+    <string name="ui_completed_downloads">Downloaded episodes</string>
+</resources>

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/screen_podcast_episodes" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:visibility="gone" android:clipToPadding="false">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="20dp">
+            <ImageView android:id="@+id/podcast_header_art" android:layout_width="88dp" android:layout_height="88dp" android:src="@drawable/ic_podcast" android:background="@drawable/artwork_surface" android:scaleType="centerCrop" android:importantForAccessibility="no" />
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:paddingStart="16dp" android:paddingEnd="0dp">
+                <TextView android:id="@+id/podcast_header_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:textSize="22sp" android:layout_marginTop="12dp" android:layout_marginBottom="8dp" android:textStyle="bold" />
+                <TextView android:id="@+id/podcast_header_summary" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/text_secondary" android:textSize="15sp" android:layout_marginTop="12dp" android:layout_marginBottom="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+        <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="none">
+            <LinearLayout android:id="@+id/episode_filter_chips" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+                <Button android:id="@+id/filter_all" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ui_all" android:minHeight="48dp" style="@style/Widget.PlainPod.Button" />
+                <Button android:id="@+id/filter_unplayed" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ui_unplayed" android:minHeight="48dp" style="@style/Widget.PlainPod.Button" />
+                <Button android:id="@+id/filter_downloaded" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ui_downloaded" android:minHeight="48dp" style="@style/Widget.PlainPod.Button" />
+            </LinearLayout>
+        </HorizontalScrollView>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="8dp" android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/catalog_episode_search" android:hint="@string/catalog_search_hint" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:importantForAutofill="no" android:inputType="text" android:maxLength="128" android:maxLines="1" android:singleLine="true" android:imeOptions="actionSearch" android:minHeight="48dp" android:layout_weight="1" />
+        </LinearLayout>
+        <ProgressBar android:id="@+id/podcast_episode_progress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:indeterminate="true" android:visibility="gone" android:accessibilityLiveRegion="polite" />
+        <TextView android:id="@+id/podcast_episode_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/text_secondary" android:textSize="15sp" android:paddingTop="12dp" android:paddingBottom="12dp" android:accessibilityLiveRegion="polite" android:visibility="gone" />
+        <LinearLayout android:id="@+id/catalog_episodes" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+        <Button android:id="@+id/load_more_episodes" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:minHeight="48dp" android:text="@string/catalog_load_more_action" android:visibility="gone" style="@style/Widget.PlainPod.Button" android:textAllCaps="false" />
+        <ProgressBar android:id="@+id/subscription_refresh_progress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:indeterminate="true" android:visibility="gone" android:accessibilityLiveRegion="polite" />
+        <TextView android:id="@+id/subscription_refresh_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:accessibilityLiveRegion="polite" android:textColor="@color/text_secondary" android:visibility="gone" android:textSize="15sp" />
+        <TextView android:id="@+id/subscription_remove_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:accessibilityLiveRegion="polite" android:textColor="@color/text_secondary" android:visibility="gone" android:textSize="15sp" />
+
+    </LinearLayout>
+</ScrollView>

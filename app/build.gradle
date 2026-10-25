@@ -1,0 +1,157 @@
+plugins {
+    id 'com.android.application'
+}
+
+def appVersionCode = providers.gradleProperty('plainPodDroidVersionCode').get().toInteger()
+def appVersionName = providers.gradleProperty('plainPodDroidVersionName').get()
+def androidXAnnotationVersion = '1.10.0'
+def media3Version = '1.11.0'
+def okHttpVersion = '5.5.1'
+
+android {
+    namespace 'io.github.jnesew.plainpoddroid'
+    compileSdk 37
+    buildToolsVersion '36.0.0'
+
+    defaultConfig {
+        applicationId 'io.github.jnesew.plainpoddroid'
+        minSdk 29
+        targetSdk 36
+        versionCode appVersionCode
+        versionName appVersionName
+
+        testInstrumentationRunner providers.gradleProperty('plainPodScreenshotFixture')
+                .map { enabled ->
+                    if (enabled != 'true') throw new GradleException('plainPodScreenshotFixture must be true when supplied')
+                    'io.github.jnesew.plainpoddroid.ScreenshotFixtureRunner'
+                }.orElse('android.test.InstrumentationTestRunner').get()
+        buildConfigField 'String', 'SECURITY_POLICY_VERSION', '"limits-0005"'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+            pseudoLocalesEnabled true
+        }
+        release {
+            debuggable false
+            jniDebuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.all {
+            jvmArgs '-Dfile.encoding=UTF-8'
+        }
+    }
+
+    sourceSets.androidTest.assets.srcDir('../tools/tests/fixtures')
+    sourceSets.main.assets.srcDir(layout.buildDirectory.dir('generated/legal-assets').get().asFile)
+
+    lint {
+        abortOnError true
+        checkReleaseBuilds true
+        htmlReport true
+        textReport true
+        explainIssues true
+    }
+}
+
+def verifyThirdPartyNotices = tasks.register('verifyThirdPartyNotices') {
+    notCompatibleWithConfigurationCache('Checks the resolved release dependency graph against retained license notices.')
+    inputs.file(rootProject.file('third-party/runtime-dependencies.json'))
+    inputs.file(rootProject.file('THIRD_PARTY_NOTICES.md'))
+    doLast {
+        def inventory = new groovy.json.JsonSlurper().parse(rootProject.file('third-party/runtime-dependencies.json'))
+        def coordinates = inventory.collect { it.coordinate }
+        if (coordinates.size() != coordinates.toSet().size()) throw new GradleException('Duplicate license inventory entries')
+        def resolved = configurations.releaseRuntimeClasspath.incoming.resolutionResult.allComponents
+                .findAll { it.id instanceof org.gradle.api.artifacts.component.ModuleComponentIdentifier }
+                .collect { "${it.id.group}:${it.id.module}:${it.id.version}".toString() }.toSet()
+        if (resolved != coordinates.toSet()) throw new GradleException(
+                "Third-party inventory differs from runtime graph. Missing: ${resolved - coordinates.toSet()}; stale: ${coordinates.toSet() - resolved}")
+        def notices = rootProject.file('THIRD_PARTY_NOTICES.md').getText('UTF-8')
+        inventory.each {
+            if (!notices.contains(it.coordinate) || !rootProject.file("LICENSES/${it.license}.txt").isFile())
+                throw new GradleException("Missing license notice for ${it.coordinate}")
+        }
+    }
+}
+
+def generateLegalAssets = tasks.register('generateLegalAssets', Sync) {
+    dependsOn verifyThirdPartyNotices
+    from(rootProject.file('LICENSE'))
+    from(rootProject.file('THIRD_PARTY_NOTICES.md'))
+    from(rootProject.file('LICENSES')) { into 'licenses' }
+    into layout.buildDirectory.dir('generated/legal-assets/legal')
+}
+tasks.named('preBuild').configure { dependsOn generateLegalAssets }
+
+configurations.configureEach {
+    exclude group: 'androidx.profileinstaller', module: 'profileinstaller'
+
+    resolutionStrategy {
+        cacheChangingModulesFor 0, 'seconds'
+        cacheDynamicVersionsFor 0, 'seconds'
+        componentSelection {
+            all { selection ->
+                def version = selection.candidate.version.toLowerCase(java.util.Locale.ROOT)
+                if (version.contains('+') || version.contains('snapshot')) {
+                    selection.reject('Dynamic and snapshot dependencies are prohibited')
+                }
+            }
+        }
+    }
+
+    if (name.startsWith('_internal-')) {
+        resolutionStrategy.failOnNonReproducibleResolution()
+        resolutionStrategy.deactivateDependencyLocking()
+    } else {
+        resolutionStrategy.activateDependencyLocking()
+    }
+}
+
+dependencyLocking {
+    lockMode = LockMode.STRICT
+}
+
+dependencies {
+    compileOnly "androidx.annotation:annotation:${androidXAnnotationVersion}"
+
+    implementation "androidx.media3:media3-exoplayer:${media3Version}"
+    implementation "androidx.media3:media3-session:${media3Version}"
+    implementation "androidx.media3:media3-datasource-okhttp:${media3Version}"
+    implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
+
+    constraints {
+        implementation('com.squareup.okio:okio:3.18.2') {
+            because 'Retain the Base64 binary-compatibility repair after the OkHttp security update'
+        }
+    }
+
+    testImplementation 'junit:junit:4.13.2'
+
+    // Platform-only legacy instrumentation API; no packaged production/test SDK dependency.
+    androidTestCompileOnly files(androidComponents.sdkComponents.bootClasspath.map { boot ->
+        def platformJar = boot.find { it.asFile.name == 'android.jar' }.asFile
+        new File(platformJar.parentFile, 'optional/android.test.base.jar')
+    })
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add('-Xlint:deprecation')
+}

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/screen_in_progress" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:visibility="gone" android:clipToPadding="false">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+        <TextView android:id="@+id/in_progress_summary" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/text_secondary" android:textSize="15sp" android:layout_marginTop="12dp" android:layout_marginBottom="8dp" />
+        <ProgressBar android:id="@+id/in_progress_progress" android:layout_width="32dp" android:layout_height="32dp" android:visibility="gone" />
+        <LinearLayout android:id="@+id/in_progress_rows" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+        <TextView android:id="@+id/in_progress_page_summary" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/text_secondary" android:textSize="14sp" android:gravity="center" android:visibility="gone" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/in_progress_previous" android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/ui_previous" android:minHeight="48dp" style="@style/Widget.PlainPod.Button" android:layout_weight="1" />
+            <Button android:id="@+id/in_progress_next" android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/ui_next" android:minHeight="48dp" style="@style/Widget.PlainPod.Button" android:layout_weight="1" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

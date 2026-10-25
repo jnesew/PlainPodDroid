@@ -1,0 +1,254 @@
+[
+  {
+    "coordinate": "androidx.annotation:annotation-experimental:1.3.1",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.annotation:annotation-jvm:1.10.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.annotation:annotation:1.10.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.arch.core:core-common:2.2.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.arch.core:core-runtime:2.2.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.collection:collection:1.2.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.concurrent:concurrent-futures:1.2.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.core:core:1.9.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.exifinterface:exifinterface:1.3.6",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.lifecycle:lifecycle-common-jvm:2.8.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.lifecycle:lifecycle-common:2.8.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.lifecycle:lifecycle-runtime-android:2.8.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.lifecycle:lifecycle-runtime:2.8.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.lifecycle:lifecycle-service:2.8.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.media3:media3-common:1.11.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.media3:media3-container:1.11.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.media3:media3-database:1.11.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.media3:media3-datasource-okhttp:1.11.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.media3:media3-datasource:1.11.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.media3:media3-decoder:1.11.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.media3:media3-exoplayer:1.11.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.media3:media3-extractor:1.11.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.media3:media3-session:1.11.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.media:media:1.7.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.startup:startup-runtime:1.2.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.tracing:tracing:1.0.0",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "androidx.versionedparcelable:versionedparcelable:1.1.1",
+    "license": "Apache-2.0",
+    "project": "https://developer.android.com/jetpack/androidx",
+    "attribution": "Android Open Source Project and AndroidX contributors"
+  },
+  {
+    "coordinate": "com.google.guava:failureaccess:1.0.2",
+    "license": "Apache-2.0",
+    "project": "https://github.com/google/guava",
+    "attribution": "The Guava Authors"
+  },
+  {
+    "coordinate": "com.google.guava:guava:33.3.1-android",
+    "license": "Apache-2.0",
+    "project": "https://github.com/google/guava",
+    "attribution": "The Guava Authors"
+  },
+  {
+    "coordinate": "com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava",
+    "license": "Apache-2.0",
+    "project": "https://github.com/google/guava",
+    "attribution": "The Guava Authors"
+  },
+  {
+    "coordinate": "com.squareup.okhttp3:okhttp-android:5.5.1",
+    "license": "Apache-2.0",
+    "project": "https://square.github.io/okhttp/",
+    "attribution": "OkHttp contributors"
+  },
+  {
+    "coordinate": "com.squareup.okhttp3:okhttp:5.5.1",
+    "license": "Apache-2.0",
+    "project": "https://square.github.io/okhttp/",
+    "attribution": "OkHttp contributors"
+  },
+  {
+    "coordinate": "com.squareup.okio:okio-jvm:3.18.2",
+    "license": "Apache-2.0",
+    "project": "https://square.github.io/okio/",
+    "attribution": "Okio contributors"
+  },
+  {
+    "coordinate": "com.squareup.okio:okio:3.18.2",
+    "license": "Apache-2.0",
+    "project": "https://square.github.io/okio/",
+    "attribution": "Okio contributors"
+  },
+  {
+    "coordinate": "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.20",
+    "license": "Apache-2.0",
+    "project": "https://github.com/JetBrains/kotlin",
+    "attribution": "JetBrains s.r.o. and Kotlin contributors"
+  },
+  {
+    "coordinate": "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20",
+    "license": "Apache-2.0",
+    "project": "https://github.com/JetBrains/kotlin",
+    "attribution": "JetBrains s.r.o. and Kotlin contributors"
+  },
+  {
+    "coordinate": "org.jetbrains.kotlin:kotlin-stdlib:2.2.21",
+    "license": "Apache-2.0",
+    "project": "https://github.com/JetBrains/kotlin",
+    "attribution": "JetBrains s.r.o. and Kotlin contributors"
+  },
+  {
+    "coordinate": "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3",
+    "license": "Apache-2.0",
+    "project": "https://github.com/Kotlin/kotlinx.coroutines",
+    "attribution": "JetBrains s.r.o. and kotlinx.coroutines contributors"
+  },
+  {
+    "coordinate": "org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.7.3",
+    "license": "Apache-2.0",
+    "project": "https://github.com/Kotlin/kotlinx.coroutines",
+    "attribution": "JetBrains s.r.o. and kotlinx.coroutines contributors"
+  },
+  {
+    "coordinate": "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3",
+    "license": "Apache-2.0",
+    "project": "https://github.com/Kotlin/kotlinx.coroutines",
+    "attribution": "JetBrains s.r.o. and kotlinx.coroutines contributors"
+  },
+  {
+    "coordinate": "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
+    "license": "Apache-2.0",
+    "project": "https://github.com/Kotlin/kotlinx.coroutines",
+    "attribution": "JetBrains s.r.o. and kotlinx.coroutines contributors"
+  },
+  {
+    "coordinate": "org.jetbrains:annotations:23.0.0",
+    "license": "Apache-2.0",
+    "project": "https://github.com/JetBrains/java-annotations",
+    "attribution": "JetBrains s.r.o. and contributors"
+  }
+]
