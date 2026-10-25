@@ -147,8 +147,24 @@ checkout. Its version comes from gradle.properties; add matching release notes
 and a Fastlane changelog named by versionCode before committing a new version.
 Use JDK 17 and the pinned SDK; no dependency metadata-writing flags are used.
 
-    ./tools/prepare-release.sh --sdk /path/to/android-sdk --offline \
-      --output /path/to/new-private-candidate
+    ./tools/prepare-release.sh --sdk /path/to/android-sdk --offline
+
+By default, release stages share this private directory outside the checkout:
+
+    ~/PlainPodDroid-releases/<versionName>/<first-12-source-commit-characters>/
+      candidate/                         unsigned APK, gates and provenance
+      signed/PlainPodDroid-<versionName>.apk
+      packet/                            verified files for distribution
+
+Parent directories are created automatically. Each version/source checkpoint has
+its own directory; repeated runs preserve existing artifacts and refuse to replace
+them. Show the paths for a clean committed checkout without creating anything:
+
+    python3 tools/release_tools.py paths
+
+Set PLAINPOD_RELEASE_ROOT or pass --release-root /path/to/private-releases to
+choose another root. An explicit --output retains the existing custom-path
+interface and requires its parent to exist. Use the same root for all stages.
 
 The output directory must not exist. Failed gates retain logs and an INCOMPLETE
 marker; only a completed candidate has READY. Preparation runs host SQL/release
@@ -167,14 +183,28 @@ The standalone gate is:
       --usage app/build/outputs/mapping/release/usage.txt \
       --sdk /path/to/android-sdk
 
-Use the existing signing helper's interactive mode to sign the candidate's
-app-unsigned.apk with the approved external key. Once signed, the packet command
-checks the trusted certificate, v2/v3 signatures and exact unsigned/signed payload
-equality before creating a new output directory:
+The prepared-signing helper selects the candidate and signed output paths
+automatically. It checks the prepared source/input hashes and unsigned APK,
+then delegates a private snapshot to the existing interactive signing helper:
 
-    ./tools/package-release.sh --candidate /path/to/private-candidate \
-      --apk /path/to/signed.apk --cert-sha256 TRUSTED_CERTIFICATE_SHA256 \
-      --sdk /path/to/android-sdk --output /path/to/new-release-packet
+    ./tools/sign-prepared-release.sh --sdk /path/to/android-sdk \
+      --keystore /path/outside/checkout/release.p12 --alias release \
+      --cert-sha256 TRUSTED_CERTIFICATE_SHA256
+
+Signing still requires an authorized external key and a real interactive terminal.
+Passwords are prompted by the SDK and are never supplied or captured by this
+pipeline. The low-level tools/sign-release-apk.sh remains available for explicit
+input/output paths. Keys stay outside the checkout and release output folders.
+
+After signing, package the default candidate/signed APK with:
+
+    ./tools/package-release.sh --sdk /path/to/android-sdk \
+      --cert-sha256 TRUSTED_CERTIFICATE_SHA256
+
+Use --candidate, --apk and --output to select existing/custom paths instead.
+Packaging checks the trusted certificate, v2/v3 signatures and exact
+unsigned/signed payload equality. It creates a new output directory and retains
+an INCOMPLETE marker if verification fails.
 
 The packet contains PlainPodDroid-<versionName>.apk, SHA256SUMS, source/toolchain/
 certificate provenance, notes, licenses and an exact-commit F-Droid build recipe.
@@ -190,12 +220,18 @@ they are not Android application dependencies. Install the locked graph locally:
     bundle config set --local path vendor/bundle
     BUNDLE_FROZEN=true bundle install
     bundle exec fastlane android metadata
-    bundle exec fastlane android prepare output:/path/to/new-private-candidate \
-      sdk:/path/to/android-sdk offline:true
+    bundle exec fastlane android paths
+    bundle exec fastlane android prepare sdk:/path/to/android-sdk offline:true
+    bundle exec fastlane android sign sdk:/path/to/android-sdk \
+      keystore:/path/outside/checkout/release.p12 alias:release \
+      cert_sha256:TRUSTED_CERTIFICATE_SHA256
+    bundle exec fastlane android package sdk:/path/to/android-sdk \
+      cert_sha256:TRUSTED_CERTIFICATE_SHA256
 
-The sign lane delegates to the interactive helper with explicit input, external
-keystore, alias, trusted certificate and new output options. package delegates
-to the packet command. screenshots prepares a synthetic debug emulator using
+Fastlane uses the same automatic directories. release_root: overrides their root;
+candidate:, apk: and output: select custom paths for the relevant stages. The
+existing sign lane's explicit input:/output: interface is also retained.
+screenshots prepares a synthetic debug emulator using
 an explicit serial; see [screenshot instructions](screenshots/README.md).
 The lanes perform local work and do not include a store-upload action. Usage
 telemetry and the lane update check are disabled.

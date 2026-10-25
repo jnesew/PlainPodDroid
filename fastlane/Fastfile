@@ -17,7 +17,20 @@ def required_option(options, name)
   value.to_s
 end
 
+def optional_options(arguments, options, flags)
+  flags.each do |name, flag|
+    arguments.concat([flag, options[name].to_s]) if options[name]
+  end
+end
+
 platform :android do
+  desc "Show automatic local release directories for the clean source checkpoint"
+  lane :paths do |options|
+    arguments = ["python3", "tools/release_tools.py", "paths"]
+    optional_options(arguments, options, {release_root: "--release-root"})
+    local_command(*arguments)
+  end
+
   desc "Check local Fastlane/F-Droid listing metadata"
   lane :metadata do
     local_command("python3", "tools/verify-metadata.py")
@@ -25,31 +38,36 @@ platform :android do
 
   desc "Build and verify a clean committed unsigned release candidate"
   lane :prepare do |options|
-    arguments = ["bash", "tools/prepare-release.sh", "--output", required_option(options, :output)]
-    arguments += ["--sdk", options[:sdk]] if options[:sdk]
+    arguments = ["bash", "tools/prepare-release.sh"]
+    optional_options(arguments, options, {output: "--output", sdk: "--sdk", release_root: "--release-root"})
     arguments << "--offline" if options[:offline].to_s == "true"
     local_command(*arguments)
   end
 
   desc "Sign an approved candidate interactively with an existing external key"
   lane :sign do |options|
-    arguments = ["bash", "tools/sign-release-apk.sh"]
-    {input: "--input", keystore: "--keystore", alias: "--alias",
-     cert_sha256: "--cert-sha256", output: "--output"}.each do |name, flag|
+    if options[:input]
+      # Retain the existing explicit low-level interface for advanced callers.
+      arguments = ["bash", "tools/sign-release-apk.sh", "--input", options[:input].to_s,
+                   "--output", required_option(options, :output)]
+    else
+      arguments = ["bash", "tools/sign-prepared-release.sh"]
+      optional_options(arguments, options, {candidate: "--candidate", output: "--output",
+                                          release_root: "--release-root"})
+    end
+    {keystore: "--keystore", alias: "--alias", cert_sha256: "--cert-sha256"}.each do |name, flag|
       arguments += [flag, required_option(options, name)]
     end
-    arguments += ["--sdk", options[:sdk]] if options[:sdk]
+    optional_options(arguments, options, {sdk: "--sdk"})
     local_command(*arguments)
   end
 
   desc "Verify the signed payload and prepare a local release packet"
   lane :package do |options|
     arguments = ["bash", "tools/package-release.sh"]
-    {candidate: "--candidate", apk: "--apk", cert_sha256: "--cert-sha256",
-     output: "--output"}.each do |name, flag|
-      arguments += [flag, required_option(options, name)]
-    end
-    arguments += ["--sdk", options[:sdk]] if options[:sdk]
+    arguments += ["--cert-sha256", required_option(options, :cert_sha256)]
+    optional_options(arguments, options, {candidate: "--candidate", apk: "--apk", output: "--output",
+                                        sdk: "--sdk", release_root: "--release-root"})
     local_command(*arguments)
   end
 

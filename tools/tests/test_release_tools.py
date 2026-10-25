@@ -280,6 +280,156 @@ class ReleaseBoundaryTest(unittest.TestCase):
         self.assertEqual("gate failure", (args.output / "gate-1.log").read_text())
         self.assertFalse((args.output / "READY").exists())
 
+    def test_release_layout_defaults_to_private_home_area_without_creating_it(self):
+        with patch.dict(release.os.environ, {}, clear=True), patch.object(Path, "home", return_value=self.root):
+            paths = release.release_layout("1.0.0-rc.1", "a" * 40)
+        self.assertEqual(self.root / "PlainPodDroid-releases/1.0.0-rc.1/aaaaaaaaaaaa/candidate",
+                         paths["candidate"])
+        self.assertFalse(paths["root"].exists())
+
+    def test_explicit_release_root_precedes_environment_and_separates_sources(self):
+        with patch.dict(release.os.environ, {"PLAINPOD_RELEASE_ROOT": str(self.root / "environment")}):
+            environment = release.release_layout("1.0.0", "a" * 40)
+            first = release.release_layout("1.0.0", "a" * 40, self.root / "chosen")
+            second = release.release_layout("1.0.0", "b" * 40, self.root / "chosen")
+            next_version = release.release_layout("1.0.1", "a" * 40, self.root / "chosen")
+        self.assertEqual(self.root / "environment", environment["root"])
+        self.assertEqual(self.root / "chosen", first["root"])
+        self.assertEqual(3, len({first["base"], second["base"], next_version["base"]}))
+
+    def test_release_layout_rejects_untrusted_path_components(self):
+        for name, commit in (("../../escape", "a" * 40), ("1.0.0", "../escape")):
+            with self.assertRaisesRegex(release.ReleaseError, "valid version and source"):
+                release.release_layout(name, commit, self.root / "releases")
+
+    def test_default_parents_are_private_and_existing_artifacts_are_preserved(self):
+        paths = release.release_layout("1.0.0", "a" * 40, self.root / "releases")
+        path = release.release_output(None, paths, "candidate")
+        for directory in (paths["root"], paths["base"].parent, paths["base"]):
+            self.assertEqual(0o700, directory.stat().st_mode & 0o777)
+        self.assertFalse(path.exists())
+        release.create_output(path)
+        (path / "keep").write_text("existing candidate")
+        with self.assertRaisesRegex(release.ReleaseError, "already exists"):
+            release.create_output(release.release_output(None, paths, "candidate"))
+        self.assertEqual("existing candidate", (path / "keep").read_text())
+
+    def test_default_parent_symlink_is_not_followed(self):
+        paths = release.release_layout("1.0.0", "a" * 40, self.root / "releases")
+        paths["root"].mkdir()
+        other = self.root / "other"; other.mkdir()
+        paths["base"].parent.symlink_to(other, target_is_directory=True)
+        with self.assertRaisesRegex(release.ReleaseError, "regular directory"):
+            release.release_output(None, paths, "candidate")
+        self.assertEqual([], list(other.iterdir()))
+
+    def test_explicit_output_keeps_existing_parent_creation_contract(self):
+        paths = release.release_layout("1.0.0", "a" * 40, self.root / "unused")
+        chosen = self.root / "missing/chosen"
+        self.assertEqual(chosen, release.release_output(chosen, paths, "packet"))
+        self.assertFalse(paths["root"].exists())
+        self.assertFalse(chosen.parent.exists())
+
+    def test_default_prepare_retains_failed_gate_evidence(self):
+        source = self.root / "source"; source.mkdir()
+        (source / "docs/release-notes").mkdir(parents=True)
+        (source / "docs/release-notes/1.0.0-rc.1.md").write_text("notes")
+        args = argparse.Namespace(output=None, release_root=self.root / "releases", sdk=None, offline=True)
+        paths = release.release_layout("1.0.0-rc.1", "a" * 40, args.release_root)
+        with self.package_patches(source), patch.object(
+                release, "run", return_value=subprocess.CompletedProcess([], 1, "", "failed gate")):
+            with self.assertRaisesRegex(release.ReleaseError, "gate failed"):
+                release.prepare(args)
+        self.assertTrue((paths["candidate"] / "INCOMPLETE").is_file())
+        self.assertFalse((paths["candidate"] / "READY").exists())
+
+    def test_package_uses_automatic_inputs_and_does_not_replace_existing_packet(self):
+        source, candidate, args = self.package_fixture()
+        args.release_root = self.root / "releases"
+        paths = release.release_layout("1.0.0-rc.1", "a" * 40, args.release_root)
+        candidate.rename(release.release_output(None, paths, "candidate"))
+        args.apk.rename(release.release_output(None, paths, "signed"))
+        args.candidate = args.apk = args.output = None
+        with self.package_patches(source), patch.object(release, "verify_apk", return_value={}):
+            release.package_release(args)
+            original = (paths["packet"] / "SHA256SUMS").read_bytes()
+            with self.assertRaisesRegex(release.ReleaseError, "already exists"):
+                release.package_release(args)
+        self.assertEqual(original, (paths["packet"] / "SHA256SUMS").read_bytes())
+
+    def sign_options(self, candidate):
+        return argparse.Namespace(candidate=candidate, output=None, release_root=self.root / "releases",
+                                  sdk=None, keystore=str(self.root / "inert-key-file"),
+                                  alias="release", cert_sha256="ab" * 32)
+
+    def test_prepared_sign_uses_verified_snapshot_and_inherits_terminal(self):
+        source, candidate, unused = self.package_fixture()
+        args = self.sign_options(candidate)
+        paths = release.release_layout("1.0.0-rc.1", "a" * 40, args.release_root)
+        def verify(snapshot, *unused, **keywords):
+            self.assertEqual(b"payload", release.zip_payload(snapshot)["classes.dex"])
+            self.zip(candidate / "app-unsigned.apk", b"concurrent candidate edit")
+        def helper(command, **keywords):
+            self.assertEqual({"cwd": source}, keywords)  # No password/input/capture arguments.
+            snapshot = Path(command[command.index("--input") + 1])
+            self.assertNotEqual(candidate / "app-unsigned.apk", snapshot)
+            self.assertEqual(b"payload", release.zip_payload(snapshot)["classes.dex"])
+            self.assertEqual(str(paths["signed"]), command[command.index("--output") + 1])
+            self.assertEqual(args.keystore, command[command.index("--keystore") + 1])
+            self.assertEqual("ab" * 32, command[command.index("--cert-sha256") + 1])
+            return subprocess.CompletedProcess(command, 0)
+        with self.package_patches(source), patch.object(release.sys.stdin, "isatty", return_value=True), \
+                patch.object(release.sys.stdout, "isatty", return_value=True), \
+                patch.object(release, "verify_apk", side_effect=verify), \
+                patch.object(release.subprocess, "run", side_effect=helper):
+            release.sign_prepared(args)
+
+    def test_prepared_sign_rejects_headless_invocation_before_helper_or_output(self):
+        source, candidate, unused = self.package_fixture()
+        args = self.sign_options(candidate)
+        with self.package_patches(source), patch.object(release.sys.stdin, "isatty", return_value=False), \
+                patch.object(release.subprocess, "run") as helper:
+            with self.assertRaisesRegex(release.ReleaseError, "interactive terminal"):
+                release.sign_prepared(args)
+            helper.assert_not_called()
+        self.assertFalse(args.release_root.exists())
+
+    def test_prepared_sign_rejects_tampered_candidate_before_helper(self):
+        source, candidate, unused = self.package_fixture()
+        self.zip(candidate / "app-unsigned.apk", b"tampered")
+        with self.package_patches(source), patch.object(release.subprocess, "run") as helper:
+            with self.assertRaisesRegex(release.ReleaseError, "hash changed"):
+                release.sign_prepared(self.sign_options(candidate))
+            helper.assert_not_called()
+
+    def test_prepared_sign_preserves_existing_signed_output(self):
+        source, candidate, unused = self.package_fixture()
+        args = self.sign_options(candidate)
+        paths = release.release_layout("1.0.0-rc.1", "a" * 40, args.release_root)
+        output = release.release_output(None, paths, "signed"); output.write_bytes(b"existing APK")
+        with self.package_patches(source), patch.object(release.sys.stdin, "isatty", return_value=True), \
+                patch.object(release.sys.stdout, "isatty", return_value=True), \
+                patch.object(release.subprocess, "run") as helper:
+            with self.assertRaisesRegex(release.ReleaseError, "already exists"):
+                release.sign_prepared(args)
+            helper.assert_not_called()
+        self.assertEqual(b"existing APK", output.read_bytes())
+
+    def test_prepared_sign_reports_helper_failure_and_removes_snapshot(self):
+        source, candidate, unused = self.package_fixture()
+        snapshots = []
+        def helper(command, **keywords):
+            snapshots.append(Path(command[command.index("--input") + 1]))
+            return subprocess.CompletedProcess(command, 1)
+        with self.package_patches(source), patch.object(release.sys.stdin, "isatty", return_value=True), \
+                patch.object(release.sys.stdout, "isatty", return_value=True), \
+                patch.object(release, "verify_apk", return_value={}), \
+                patch.object(release.subprocess, "run", side_effect=helper):
+            with self.assertRaisesRegex(release.ReleaseError, "helper failed"):
+                release.sign_prepared(self.sign_options(candidate))
+        self.assertTrue(snapshots)
+        self.assertFalse(snapshots[0].parent.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

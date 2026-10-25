@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local release preparation and APK gates. Never signs, tags, pushes or uploads."""
+"""Local release gates, interactive signing and packaging. Never tags, pushes or uploads."""
 import argparse
 import datetime
 import hashlib
@@ -11,6 +11,7 @@ import shutil
 import struct
 import subprocess
 import sys
+import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -294,6 +295,32 @@ def create_output(path):
     return output
 
 
+def release_layout(name, commit, release_root=None):
+    require(VERSION.fullmatch(name) and re.fullmatch(r"[a-f0-9]{40}", commit),
+            "Release paths require a valid version and source commit.")
+    root = Path(release_root or os.environ.get("PLAINPOD_RELEASE_ROOT") or
+                Path.home() / "PlainPodDroid-releases").expanduser().absolute()
+    base = root / name / commit[:12]
+    return {"root": root, "base": base, "candidate": base / "candidate",
+            "signed": base / "signed" / f"PlainPodDroid-{name}.apk", "packet": base / "packet"}
+
+
+def release_output(explicit, layout, stage):
+    if explicit is not None:
+        return Path(explicit).expanduser()
+    # Create only parents; stage directories/files remain exclusive outputs.
+    parents = [layout["root"], layout["base"].parent, layout["base"]]
+    if stage == "signed":
+        parents.append(layout["signed"].parent)
+    for directory in parents:
+        try:
+            directory.mkdir(mode=0o700, parents=directory == layout["root"])
+        except FileExistsError:
+            require(directory.is_dir() and not directory.is_symlink(),
+                    "Automatic release directory is not a regular directory: " + str(directory))
+    return layout[stage]
+
+
 def write_json(path, value):
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
 
@@ -338,7 +365,8 @@ def prepare(args):
         require(not match or Path(match[1]).resolve() == sdk, "local.properties selects a different SDK.")
     notes = ROOT / "docs/release-notes" / f"{name}.md"
     require(notes.is_file(), "Add release notes for the committed version.")
-    output = create_output(args.output)
+    layout = release_layout(name, commit, getattr(args, "release_root", None))
+    output = create_output(release_output(args.output, layout, "candidate"))
     tasks = ["clean", "testDebugUnitTest", "compileDebugAndroidTestJavaWithJavac",
              "lintDebug", "assembleDebug", "lintRelease", "assembleRelease", "assembleDebugAndroidTest"]
     commands = [
@@ -382,15 +410,13 @@ def prepare(args):
     print(f"Unsigned candidate ready: {output}")
 
 
-def package_release(args):
-    candidate = Path(args.candidate).resolve(strict=True)
+def checked_candidate(candidate, name, code, commit):
     require((candidate / "READY").is_file() and not (candidate / "INCOMPLETE").exists(),
             "Candidate did not complete preparation.")
     provenance = json.loads((candidate / "PROVENANCE.json").read_text())
     require(provenance.get("schema") == 1 and provenance.get("state") == "unsigned-candidate",
             "Unsupported candidate provenance.")
-    name, code = source_version()
-    require(provenance["source_commit"] == checkpoint() and
+    require(provenance["source_commit"] == commit and
             provenance["apk"]["version_name"] == name and provenance["apk"]["version_code"] == code,
             "Use the candidate's exact clean source checkpoint/version.")
     require(set(provenance["input_hashes"]) == {
@@ -404,12 +430,50 @@ def package_release(args):
                 "Candidate build inputs changed.")
     unsigned = candidate / "app-unsigned.apk"
     require(digest(unsigned) == provenance["apk"]["sha256"], "Unsigned candidate hash changed.")
+    return provenance, unsigned
+
+
+def sign_prepared(args):
+    name, code = source_version()
+    commit = checkpoint()
+    layout = release_layout(name, commit, args.release_root)
+    candidate = Path(args.candidate or layout["candidate"]).expanduser().resolve(strict=True)
+    provenance, unsigned = checked_candidate(candidate, name, code, commit)
+    require(sys.stdin.isatty() and sys.stdout.isatty(),
+            "Run signing in an interactive terminal; passwords must be prompted securely.")
     sdk = sdk_path(args.sdk)
     certificate = normalize_certificate(args.cert_sha256)
-    output = create_output(args.output)
+    output = release_output(args.output, layout, "signed")
+    require(not output.exists() and not output.is_symlink(),
+            "Output already exists; nothing was overwritten.")
+    with tempfile.TemporaryDirectory(prefix="plainpoddroid-prepared-sign-") as directory:
+        snapshot = Path(directory) / "unsigned.apk"
+        usage = Path(directory) / "r8-usage.txt"
+        shutil.copyfile(unsigned, snapshot)
+        shutil.copyfile(candidate / "r8-usage.txt", usage)
+        require(digest(snapshot) == provenance["apk"]["sha256"], "Unsigned candidate changed before signing.")
+        verify_apk(snapshot, sdk, name, code, usage=usage)
+        require(checkpoint() == commit, "Source changed before signing.")
+        # Inherit the terminal directly; never capture or supply signing passwords.
+        result = subprocess.run(["bash", str(ROOT / "tools/sign-release-apk.sh"),
+                                 "--input", str(snapshot), "--sdk", str(sdk),
+                                 "--keystore", args.keystore, "--alias", args.alias,
+                                 "--cert-sha256", certificate, "--output", str(output)], cwd=ROOT)
+        require(result.returncode == 0, "Interactive signing helper failed.")
+
+
+def package_release(args):
+    name, code = source_version()
+    commit = checkpoint()
+    layout = release_layout(name, commit, getattr(args, "release_root", None))
+    candidate = Path(args.candidate or layout["candidate"]).expanduser().resolve(strict=True)
+    provenance, unsigned = checked_candidate(candidate, name, code, commit)
+    sdk = sdk_path(args.sdk)
+    certificate = normalize_certificate(args.cert_sha256)
+    output = create_output(release_output(args.output, layout, "packet"))
     filename = f"PlainPodDroid-{name}.apk"
     signed = output / filename
-    shutil.copyfile(args.apk, signed)
+    shutil.copyfile(args.apk or layout["signed"], signed)
     # Verify the exact private snapshot that will become the public asset.
     report = verify_apk(signed, sdk, name, code, certificate=certificate,
                         usage=candidate / "r8-usage.txt")
@@ -447,19 +511,34 @@ def main():
     verify.add_argument("--usage", required=True)
     verify.add_argument("--cert-sha256")
     prepare_parser = commands.add_parser("prepare")
-    prepare_parser.add_argument("--output", required=True)
+    prepare_parser.add_argument("--output")
+    prepare_parser.add_argument("--release-root")
     prepare_parser.add_argument("--sdk")
     prepare_parser.add_argument("--offline", action="store_true")
     package_parser = commands.add_parser("package")
     for option in ("candidate", "apk", "cert-sha256", "output"):
-        package_parser.add_argument("--" + option, required=True)
+        package_parser.add_argument("--" + option, required=option == "cert-sha256")
+    package_parser.add_argument("--release-root")
     package_parser.add_argument("--sdk")
+    sign_parser = commands.add_parser("sign")
+    for option in ("keystore", "alias", "cert-sha256"):
+        sign_parser.add_argument("--" + option, required=True)
+    for option in ("candidate", "output", "release-root", "sdk"):
+        sign_parser.add_argument("--" + option)
+    paths_parser = commands.add_parser("paths")
+    paths_parser.add_argument("--release-root")
     args = parser.parse_args()
     try:
         if args.command == "prepare":
             prepare(args)
         elif args.command == "package":
             package_release(args)
+        elif args.command == "sign":
+            sign_prepared(args)
+        elif args.command == "paths":
+            name, _ = source_version()
+            print(json.dumps({k: str(v) for k, v in
+                              release_layout(name, checkpoint(), args.release_root).items()}, indent=2))
         else:
             name, code = source_version()
             print(json.dumps(verify_apk(args.apk, sdk_path(args.sdk), name, code,
