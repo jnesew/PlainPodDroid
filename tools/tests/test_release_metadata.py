@@ -1,6 +1,7 @@
 import importlib.util
 from pathlib import Path
 import shutil
+import re
 import tempfile
 import unittest
 
@@ -28,7 +29,9 @@ class ListingBoundaryTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "1..80"): listing.check(self.root)
 
     def test_missing_version_code_changelog_is_rejected(self):
-        (self.locale / "changelogs/2.txt").unlink()
+        code = re.search(r"(?m)^plainPodDroidVersionCode=(\d+)$",
+                         (self.root / "gradle.properties").read_text())[1]
+        (self.locale / "changelogs" / f"{code}.txt").unlink()
         with self.assertRaisesRegex(ValueError, "changelog"): listing.check(self.root)
 
     def test_corrupt_png_is_rejected(self):

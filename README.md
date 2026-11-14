@@ -1,7 +1,7 @@
-# PlainPodDroid
+# PPodcast
 
 Podcasts, kept simple. Follow your shows, build a listening queue, stream episodes
-or download them for later. PlainPodDroid works on Android 10 and newer, including
+or download them for later. PPodcast works on Android 10 and newer, including
 GrapheneOS, without Google Play Services.
 
 ## Make it your own
@@ -10,7 +10,12 @@ GrapheneOS, without Google Play Services.
   subscriptions from another player with OPML.
 - Browse new episodes, favorites, listening history and unfinished episodes.
 - Queue episodes, set playback speed for each show, use chapters and a sleep
-  timer, and choose your skip controls.
+  timer, and choose your skip controls. Finished episodes leave the queue and
+  playback continues with its next episode, including in download-before-playing
+  mode. Offline mode requires the next episode to be downloaded already.
+- See **Up next** near the end of an episode, with an early notice when Offline mode
+  blocks playback. Set a podcast’s speed in its playback options and the global
+  default speed in Settings.
 - Use the Download button beside Play to save an episode, or enable automatic
   downloads for a show. Set a storage budget and choose whether to remove
   completed downloads. Find requests and saved audio together in **Downloads**.
@@ -37,8 +42,10 @@ artwork. See the [full screenshot set](docs/screenshots/README.md), including da
 
 The first signed release is being prepared. Once it is available, download the
 APK from [GitHub Releases](https://github.com/jnesew/PlainPodDroid/releases), or
-[add PlainPodDroid to Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22io.github.jnesew.plainpoddroid%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fjnesew%2FPlainPodDroid%22%2C%22author%22%3A%22jnesew%22%2C%22name%22%3A%22PlainPodDroid%22%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22%5EPlainPodDroid-%5B0-9%5D%2B%5C%5C%5C%5C.%5B0-9%5D%2B%5C%5C%5C%5C.%5B0-9%5D%2B%5C%5C%5C%5C.apk%24%5C%22%2C%5C%22autoApkFilterByArch%5C%22%3Afalse%7D%22%7D) to follow stable releases.
+[add PPodcast to Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22io.github.jnesew.plainpoddroid%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fjnesew%2FPlainPodDroid%22%2C%22author%22%3A%22jnesew%22%2C%22name%22%3A%22PPodcast%22%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22%5EPlainPodDroid-%5B0-9%5D%2B%5C%5C%5C%5C.%5B0-9%5D%2B%5C%5C%5C%5C.%5B0-9%5D%2B%5C%5C%5C%5C.apk%24%5C%22%2C%5C%22autoApkFilterByArch%5C%22%3Afalse%7D%22%7D) to follow stable releases.
 You can also paste `https://github.com/jnesew/PlainPodDroid` into Obtainium.
+PPodcast was previously named PlainPodDroid; existing download filenames and
+repository links retain that name.
 One universal APK supports all compatible devices.
 
 Release candidates use the separate [preview configuration](distribution/obtainium-preview.json).
@@ -60,7 +67,7 @@ passwords, audio downloads or listening history.
 
 ## A few things to know
 
-PlainPodDroid plays HTTPS audio podcasts. Some paid or platform-only shows do not
+PPodcast plays HTTPS audio podcasts. Some paid or platform-only shows do not
 provide a usable RSS feed. Public RSS feeds and supported private feed links can
 be added; feeds that require a login support HTTPS Basic authentication.
 
@@ -68,6 +75,9 @@ There is no podcast directory or cross-device sync. Use an RSS/Apple link from a
 source you trust, or import your existing subscriptions.
 
 ## Help and source
+
+See the [changelog](CHANGELOG.md) for release changes and
+[versioning scheme](docs/VERSIONING.md) for version names and Android update codes.
 
 Found a problem? [Open an issue](https://github.com/jnesew/PlainPodDroid/issues)
 with your Android version, app version and the steps to reproduce it. Please
@@ -79,6 +89,6 @@ For building from source, see [Building](docs/BUILDING.md).
 
 ## License
 
-PlainPodDroid’s original code is available under the [MIT license](LICENSE).
+PPodcast’s original code is available under the [MIT license](LICENSE).
 See [third-party notices](THIRD_PARTY_NOTICES.md) for the libraries used by the
 app. License texts are also available offline from About in the app.

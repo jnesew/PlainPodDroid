@@ -23,6 +23,7 @@ public final class NavigationShell {
     private final View drawer, scrim, content;
     private boolean drawerWasOpen;
     private int podcastCount = -1;
+    private String contextTitle = "";
     private final Button navigation;
 
     public NavigationShell(Context context, View root, Bundle saved, Runnable changed, Runnable about) {
@@ -41,10 +42,11 @@ public final class NavigationShell {
         bind(R.id.nav_queue, Destination.QUEUE); bind(R.id.nav_favorites, Destination.FAVORITES);
         bind(R.id.nav_history, Destination.HISTORY); bind(R.id.nav_archives, Destination.ARCHIVES);
         bind(R.id.nav_new_episodes, Destination.NEW_EPISODES); bind(R.id.nav_in_progress, Destination.IN_PROGRESS);
-        bind(R.id.nav_settings, Destination.SETTINGS); bind(R.id.nav_add_podcast, Destination.ADD_PODCAST);
+        bind(R.id.nav_settings, Destination.SETTINGS);
         root.findViewById(R.id.nav_about).setOnClickListener(v -> {
             state.closeDrawer(); render(); about.run();
         });
+        root.findViewById(R.id.add_podcast_action).setOnClickListener(v -> addPodcast());
         scrim.setOnClickListener(v -> { state.closeDrawer(); render(); });
         navigation.setOnClickListener(v -> {
             if (state.hasParent()) back(); else { state.openDrawer(); render(); }
@@ -56,8 +58,7 @@ public final class NavigationShell {
     private void bind(int id, Destination destination) {
         Button item = root.findViewById(id); drawerItems.put(destination, item);
         item.setOnClickListener(v -> {
-            if (destination == Destination.ADD_PODCAST) state.openAddPodcast();
-            else state.select(destination);
+            state.select(destination);
             render(); changed.run();
         });
     }
@@ -78,8 +79,12 @@ public final class NavigationShell {
         boolean episode = selected == Destination.EPISODE;
         root.findViewById(R.id.episode_favorite_action).setVisibility(episode ? View.VISIBLE : View.GONE);
         root.findViewById(R.id.episode_queue_header).setVisibility(episode ? View.VISIBLE : View.GONE);
+        root.findViewById(R.id.add_podcast_action).setVisibility(selected == Destination.PODCASTS ? View.VISIBLE : View.GONE);
         root.findViewById(R.id.search_action).setVisibility(selected == Destination.PODCASTS ? View.VISIBLE : View.GONE);
+        root.findViewById(R.id.destination_overflow).setVisibility(
+                selected == Destination.SETTINGS || selected == Destination.ADD_PODCAST ? View.GONE : View.VISIBLE);
         renderTitle(selected);
+        renderContextTitle(selected);
         UiWidgets.icon(navigation, state.hasParent() ? R.drawable.ic_back : R.drawable.ic_menu,
                 context.getString(state.hasParent() ? R.string.ui_back : R.string.ui_navigation), false);
         boolean open = state.isDrawerOpen();
@@ -96,6 +101,16 @@ public final class NavigationShell {
         if (open && !drawerWasOpen) drawerItems.get(Destination.PODCASTS).requestFocus();
         if (!open && drawerWasOpen) navigation.requestFocus();
         drawerWasOpen = open;
+    }
+    public void setContextTitle(String value) {
+        contextTitle = value;
+        renderContextTitle(state.current().destination());
+    }
+    private void renderContextTitle(Destination selected) {
+        TextView label = root.findViewById(R.id.destination_context);
+        label.setText(contextTitle);
+        label.setVisibility((selected == Destination.EPISODE || selected == Destination.PODCAST_EPISODES)
+                && !contextTitle.isEmpty() ? View.VISIBLE : View.GONE);
     }
     public void setPodcastCount(int count) {
         podcastCount = Math.max(0, count);

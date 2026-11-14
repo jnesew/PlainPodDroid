@@ -1,6 +1,7 @@
 package io.github.jnesew.plainpoddroid.playback;
 
 import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,10 +10,13 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.AudioAttributes;
+import androidx.media3.common.C;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.okhttp.OkHttpDataSource;
 import androidx.media3.session.MediaSession;
@@ -22,6 +26,8 @@ import androidx.media3.session.SessionResult;
 
 import io.github.jnesew.plainpoddroid.core.download.AppPrivateDownloadStore;
 import io.github.jnesew.plainpoddroid.core.playback.PlaybackQueuePolicy;
+import io.github.jnesew.plainpoddroid.core.playback.PlaybackQueueAdvancer;
+import io.github.jnesew.plainpoddroid.core.playback.PlaybackBatchResolution;
 import io.github.jnesew.plainpoddroid.core.playback.PlaybackProgressCoordinator;
 import io.github.jnesew.plainpoddroid.core.playback.PlaybackRequestResolver;
 import io.github.jnesew.plainpoddroid.core.playback.PlaybackSource;
@@ -74,16 +80,22 @@ public final class PlaybackService extends MediaSessionService
             updateProtectedMediaId();
             if (playbackState == Player.STATE_IDLE || playbackState == Player.STATE_ENDED) {
                 sampleCurrentProgress(true);
+                boolean continueQueue = playbackState == Player.STATE_ENDED && player != null
+                        && player.getPlayWhenReady() && !sleepTimerState.isEndOfEpisode()
+                        && !sleepTimerState.isExpired(SystemClock.elapsedRealtime());
                 if (playbackState == Player.STATE_ENDED && player != null) {
                     MediaItem endedItem = player.getCurrentMediaItem();
+                    if (endedItem != null && continueQueue) advanceQueue(endedItem.mediaId);
                     if (endedItem != null) queueCompletedDownloadCleanup(endedItem.mediaId);
                 }
-                cancelSleepTimerInternal(true);
+                if (playbackState == Player.STATE_IDLE) cancelQueueAdvance();
+                if (!continueQueue && !advancingQueue) cancelSleepTimerInternal(true);
             }
         }
 
         @Override
         public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
+            if (!playWhenReady) cancelQueueAdvance();
             if (!playWhenReady
                     && reason == Player.PLAY_WHEN_READY_CHANGE_REASON_END_OF_MEDIA_ITEM
                     && sleepTimerState.isEndOfEpisode()) {
@@ -125,6 +137,8 @@ public final class PlaybackService extends MediaSessionService
     private AppPrivateDownloadStore downloadStore;
     private ExecutorService progressExecutor;
     private PlaybackResolutionWorker resolutionWorker;
+    private PlaybackQueueAdvancer queueAdvancer;
+    private boolean advancingQueue;
     private PlaybackProgressCoordinator progressCoordinator;
     private io.github.jnesew.plainpoddroid.core.playback.PodcastPlaybackSpeedCoordinator speedCoordinator;
     private SleepTimerState sleepTimerState = SleepTimerState.inactive();
@@ -157,6 +171,8 @@ public final class PlaybackService extends MediaSessionService
                     downloadStore,
                     application.getRemoteEpisodeCatalog());
             resolutionWorker = new PlaybackResolutionWorker(resolver);
+            queueAdvancer = new PlaybackQueueAdvancer(application.getEpisodeQueueStore(), resolver,
+                    progressExecutor, command -> mainHandler.post(command));
             DataSource.Factory remoteSourceFactory = new OkHttpDataSource.Factory(
                     application.getPlaybackNetworkStack()
                             .newMediaStreamingCallFactory(BuildConfig.VERSION_NAME,
@@ -168,16 +184,21 @@ public final class PlaybackService extends MediaSessionService
                             application.getPlaybackDownloadPreparer(), localSourceFactory));
             DefaultMediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(
                     mediaDataSourceFactory);
-            player = new ExoPlayer.Builder(this, mediaSourceFactory)
-                    .setHandleAudioBecomingNoisy(true)
-                    .build();
+            player = createPlayer(this, mediaSourceFactory);
             applyPlaybackControlSettings();
             player.addListener(progressListener);
             mediaSession = new MediaSession.Builder(this, new PodcastSessionPlayer(player))
                     .setCallback(new PlaybackSessionCallback(
                             Process.myUid(),
                             resolutionWorker,
-                            this::enforceCurrentPlaylist,
+                            new PlaybackSessionCallback.PlaybackBoundary() {
+                                @Override public boolean enforceCurrentPlaylist() {
+                                    return PlaybackService.this.enforceCurrentPlaylist();
+                                }
+                                @Override public void cancelQueueAdvance() {
+                                    PlaybackService.this.cancelQueueAdvance();
+                                }
+                            },
                             new PlaybackSessionCallback.SleepTimerControl() {
                                 @Override
                                 public SessionResult arm(SleepTimerOption option) {
@@ -207,6 +228,18 @@ public final class PlaybackService extends MediaSessionService
         enforceCurrentPlaylist();
     }
 
+    static ExoPlayer createPlayer(Context context, MediaSource.Factory mediaSourceFactory) {
+        // Speech pauses for transient focus loss instead of ducking and losing words.
+        // Media3 owns focus acquisition, suppression, resumption and abandonment.
+        return new ExoPlayer.Builder(context, mediaSourceFactory)
+                .setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(C.USAGE_MEDIA)
+                        .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
+                        .build(), true)
+                .setHandleAudioBecomingNoisy(true)
+                .build();
+    }
+
     @Override
     public MediaSession onGetSession(MediaSession.ControllerInfo controllerInfo) {
         return mediaSession;
@@ -228,6 +261,7 @@ public final class PlaybackService extends MediaSessionService
                 applyPlaybackControlSettings();
             }
             if (enforcePrivacy) {
+                cancelQueueAdvance();
                 enforceCurrentPlaylist();
             }
         };
@@ -240,6 +274,7 @@ public final class PlaybackService extends MediaSessionService
 
     @Override
     public void onDestroy() {
+        cancelQueueAdvance();
         mainHandler.removeCallbacks(progressSampler);
         cancelSleepTimerInternal(false);
         if (privacySettings != null) {
@@ -317,6 +352,36 @@ public final class PlaybackService extends MediaSessionService
         if (player != null && player.isPlaying()) {
             mainHandler.postDelayed(progressSampler, PROGRESS_SAMPLE_INTERVAL_MILLIS);
         }
+    }
+
+    private void cancelQueueAdvance() {
+        if (queueAdvancer != null) queueAdvancer.cancel();
+    }
+
+    private void advanceQueue(String completedId) {
+        if (queueAdvancer == null) return;
+        queueAdvancer.advance(completedId, source -> {
+            MediaItem current = player == null ? null : player.getCurrentMediaItem();
+            if (current == null || !completedId.equals(current.mediaId)
+                    || player.getPlaybackState() != Player.STATE_ENDED
+                    || !player.getPlayWhenReady()) return;
+            if (sleepTimerState.isExpired(SystemClock.elapsedRealtime())) {
+                expireSleepTimerIfNeeded();
+                return;
+            }
+            MediaItem next = PlaybackSessionCallback.resolvedMediaItems(
+                    PlaybackBatchResolution.allowed(List.of(source))).get(0);
+            advancingQueue = true;
+            try {
+                player.setMediaItem(next, source.getPlaybackPositionMillis());
+                if (enforceCurrentPlaylist()) {
+                    player.prepare();
+                    player.play();
+                }
+            } finally {
+                advancingQueue = false;
+            }
+        }, () -> cancelSleepTimerInternal(true));
     }
 
     private void updateProtectedMediaId() {

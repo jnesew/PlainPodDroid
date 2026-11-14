@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PlainPodDroid</string>
+    <string name="app_name">PPodcast</string>
     <string name="playback_status_connecting">Connecting to the app-private playback service…</string>
     <string name="playback_status_unavailable">Playback controls unavailable.</string>
     <string name="playback_status_idle">Choose Play in episode details. Viewing a title or opening details never starts audio.</string>
@@ -101,7 +101,7 @@
     <string name="opml_export_saved">OPML exported.</string>
     <string name="opml_export_write_error">The document could not be fully written. The selected destination may contain an incomplete file.</string>
     <string name="opml_background_error">Background work is unavailable. Reopen the screen and try again.</string>
-    <string name="catalog_refresh_action">Reload saved library</string>
+    <string name="catalog_refresh_action">Reload list</string>
     <string name="catalog_load_more_action">Load 50 more episodes</string>
     <string name="catalog_podcast_search_hint">Search podcasts</string>
     <string name="catalog_updated_at_format">Catalog saved %1$s</string>
@@ -123,17 +123,17 @@
         <item>Light</item>
         <item>Dark</item>
     </string-array>
-    <string name="about_open">About PlainPodDroid</string>
+    <string name="about_open">About PPodcast</string>
     <string name="about_close">Back</string>
     <string name="about_app_license">MIT license</string>
     <string name="about_third_party_licenses">Third-party licenses</string>
     <string name="about_license_error">Could not open the license text.</string>
-    <string name="about_heading">About PlainPodDroid</string>
+    <string name="about_heading">About PPodcast</string>
     <string name="about_version_format">Version %1$s</string>
     <string name="about_privacy_heading">Privacy</string>
     <string name="about_privacy_statement">Your library, downloads and listening history stay on this device. You do not need an account, and the app has no ads, analytics or crash reporting. When you update or listen to a show, its hosts receive the requests needed to deliver the content. Offline mode pauses all app network activity. Keep exported subscription files private if they contain private feed links.</string>
     <string name="about_license_heading">Application license</string>
-    <string name="about_license_status">PlainPodDroid is free and open source, released under the MIT license.</string>
+    <string name="about_license_status">PPodcast is free and open source, released under the MIT license.</string>
     <string name="about_dependencies_heading">Open-source components</string>
     <string name="about_dependencies">Playback is powered by AndroidX Media3, with OkHttp handling connections. Thanks to these projects and the other open-source libraries that make this app possible.</string>
     <string name="playback_completion_label">Mark episodes played</string>
@@ -152,7 +152,7 @@
     <string name="catalog_status_no_matches">No episodes match this filter or title search.</string>
     <string name="catalog_status_idle">The saved library has not been loaded.</string>
     <string name="catalog_status_loading_subscriptions">Loading saved subscriptions…</string>
-    <string name="catalog_status_empty">No subscriptions are saved. Preview and explicitly confirm a feed above to add one.</string>
+    <string name="catalog_status_empty">No subscriptions are saved. Tap + to preview a podcast, or import OPML in Settings.</string>
     <string name="catalog_status_choose_subscription">Choose a saved subscription to view its episodes.</string>
     <string name="catalog_status_loading_episodes">Loading the first 50 episode summaries…</string>
     <string name="catalog_status_loading_more">Loading more episodes…</string>
@@ -186,7 +186,7 @@
     <string name="subscription_refresh_error_storage">The refreshed feed could not be saved. The prior valid catalog was preserved.</string>
     <string name="subscription_refresh_error_background">Background work is unavailable. Close and reopen the screen.</string>
     <string name="subscription_refresh_error_unknown">The selected feed could not be refreshed.</string>
-    <string name="refresh_all_action">Refresh all saved feeds</string>
+    <string name="refresh_all_action">Refresh feeds</string>
     <string name="refresh_all_cancel_action">Cancel after current feed</string>
     <string name="refresh_all_status_refreshing">Refreshing podcasts…</string>
     <string name="refresh_all_error_storage">The saved feed list could not be read. No new refresh-all request can start until the library is available.</string>
@@ -250,7 +250,7 @@
     <string name="episode_queue_remove_action">Remove</string>
     <string name="episode_queue_move_up_action">Move up</string>
     <string name="episode_queue_move_down_action">Move down</string>
-    <string name="episode_queue_refresh_action">Refresh local queue</string>
+    <string name="episode_queue_refresh_action">Reload list</string>
     <string name="episode_queue_previous_page_action">Previous queue page</string>
     <string name="episode_queue_next_page_action">Next queue page</string>
     <string name="episode_queue_status_idle">Loading queue…</string>
@@ -297,7 +297,7 @@
         <item quantity="one">%1$d second</item>
         <item quantity="other">%1$d seconds</item>
     </plurals>
-    <string name="playback_speed_label">Default playback speed</string>
+    <string name="playback_speed_label">Default speed</string>
     <string name="playback_speed_whole_format">%1$d×</string>
     <string name="playback_speed_tenths_format">%1$d.%2$d×</string>
     <string name="playback_speed_hundredths_format">%1$d.%2$02d×</string>

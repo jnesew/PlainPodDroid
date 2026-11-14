@@ -31,7 +31,7 @@
     <plurals name="ui_batch_queued"><item quantity="one">Added %d episode to queue.</item><item quantity="other">Added %d episodes to queue.</item></plurals>
     <plurals name="ui_batch_downloads"><item quantity="one">Queued %d download.</item><item quantity="other">Queued %d downloads.</item></plurals>
     <string name="ui_podcast_speed">Podcast speed</string>
-    <string name="ui_use_default_speed">Use default (%s)</string>
+    <string name="ui_use_default_speed">Default</string>
     <string name="ui_new_episodes">New episodes</string>
     <string name="ui_in_progress">In progress</string>
     <string name="ui_empty_new_episodes">You’re up to date.</string>
@@ -71,7 +71,7 @@
     <string name="ui_previous">Previous</string>
     <string name="ui_next">Next</string>
     <string name="ui_loading">Loading…</string>
-    <string name="ui_empty_podcasts">Your podcasts will appear here. Add a feed URL or import OPML to get started.</string>
+    <string name="ui_empty_podcasts">Tap + to add a podcast, or import OPML in Settings.</string>
     <string name="ui_empty_archives">No archived podcasts.</string>
     <string name="ui_empty_downloads">No completed downloads yet.</string>
     <string name="ui_empty_favorites">Favorite an episode to find it here.</string>
@@ -151,6 +151,17 @@
     <string name="login_needed">Check the podcast login or private feed link.</string>
     <string name="login_denied">Access denied. Check your login or private feed link.</string>
     <string name="login_save">Save</string>
+    <string name="ui_speed_for_podcast">Playback speed</string>
+    <string name="ui_speed_loading">Loading podcast speed…</string>
+    <string name="ui_speed_saving">Saving podcast speed…</string>
+    <string name="ui_up_next">Up next: %1$s</string>
+    <string name="ui_queue_read_failed">Queue status unavailable. Open Queue to reload.</string>
+    <string name="ui_next_offline_blocked">Offline mode: download required to continue</string>
+    <string name="ui_next_unavailable">Next episode unavailable. Open Queue to choose another.</string>
+    <string name="ui_queue_playback_stopped">Playback stopped. %1$s</string>
+    <string name="ui_current_playback_failed">Playback failed. Check the current episode’s download or feed login.</string>
+    <string name="ui_current_episode_state">Current episode</string>
+    <string name="ui_current_episode_accessibility">Current episode: %1$s</string>
 </resources>
 
 

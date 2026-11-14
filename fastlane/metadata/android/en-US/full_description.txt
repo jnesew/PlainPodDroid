@@ -1,4 +1,4 @@
-<p>Podcasts, kept simple. PlainPodDroid is a native audio podcast player for Android 10 and newer, including GrapheneOS, without Google Play Services.</p>
+<p>Podcasts, kept simple. PPodcast is a native audio podcast player for Android 10 and newer, including GrapheneOS, without Google Play Services.</p>
 
 <ul>
 <li>Follow shows using HTTPS RSS feeds or Apple Podcasts links, and import or export subscriptions with OPML.</li>

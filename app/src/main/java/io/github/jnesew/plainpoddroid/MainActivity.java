@@ -206,7 +206,7 @@ public final class MainActivity extends Activity {
         playbackPrivacySettings = new PlaybackPrivacySettings(this);
         configureSubscriptionUi();
         playbackPanel = new PlaybackPanel(this, mainHandler, playbackPrivacySettings,
-                this::refreshEpisodePlaybackButton);
+                this::refreshEpisodePlaybackButton, screenWorker);
         chapterPanel = new ChapterPanel(this, findViewById(R.id.episode_current_chapter),
                 findViewById(R.id.episode_seek), new ChapterPanel.Actions() {
                     public void select(String id, PodcastChapter chapter) { seekChapter(id, chapter); }
@@ -448,6 +448,7 @@ public final class MainActivity extends Activity {
             public boolean canChangePodcast(){return MainActivity.this.canChangePodcast();}
             public boolean canEditFeedLogin(){return MainActivity.this.canEditFeedLogin();}
             public void changed(){reloadCatalogAfterLocalAction();}
+            public void playbackOptions(long id) { playbackPanel.showOptionsForPodcast(id); }
         });
         artworkThumbnailLoader = new ArtworkThumbnailLoader(
                 new BoundedArtworkAcquirer(application.getArtworkTransport()),
@@ -639,6 +640,7 @@ public final class MainActivity extends Activity {
     private void renderEpisodeQueueState(EpisodeQueueController.State state) {
         episodeQueueProgress.setVisibility(state.isBusy() ? View.VISIBLE : View.GONE);
         renderEpisodeQueueEntries(state);
+        playbackPanel.refreshQueueStatus();
 
         refreshEpisodeQueueButton.setEnabled(
                 !state.isBusy() && !hasQueueCompetingWork());
@@ -1296,6 +1298,7 @@ public final class MainActivity extends Activity {
         int active = 0;
         for (CatalogSubscriptionSummary podcast : state.getSubscriptions()) if (podcast.isSubscribed()) active++;
         navigationShell.setPodcastCount(active);
+        updateDestinationContext();
         for (CatalogSubscriptionSummary podcast : state.getSubscriptions()) {
             if (podcast.getSubscriptionId() != state.getSelectedSubscriptionId()) continue;
             ((TextView) findViewById(R.id.podcast_header_title)).setText(displayTitle(podcast.getTitle()));
@@ -1374,6 +1377,7 @@ public final class MainActivity extends Activity {
     }
 
     private void onAudioSettingsChanged() {
+        playbackPanel.refreshQueueStatus();
         if (playbackPrivacySettings.isOfflineModeEnabled()) {
             subscriptionController.cancel();
             manualRefreshAllController.cancel();
@@ -1407,6 +1411,7 @@ public final class MainActivity extends Activity {
 
     private void onManualDownloadsChanged(){
         if(isDestroyed()||manualDownloads==null)return;
+        playbackPanel.refreshQueueStatus();
         var next=manualDownloads.snapshot();
         boolean finished=manualDownloadEntries.stream().anyMatch(old->next.entries().stream().noneMatch(entry->entry.request().id()==old.request().id()));
         manualDownloadEntries=next.entries();manualDownloadPanel.render(next);
@@ -1604,6 +1609,8 @@ public final class MainActivity extends Activity {
         EpisodeDetails details = state.getDetails();
         if (details != null && navigationShell.current().destination() == Destination.EPISODE
                 && !details.getMediaId().equals(navigationShell.current().episodeId())) details = null;
+        if (navigationShell.current().destination() == Destination.EPISODE)
+            navigationShell.setContextTitle(details == null || details.getPodcast() == null ? "" : details.getPodcast().title());
         playbackPanel.bindEpisode(details);
         episodeDetailsPanel.setVisibility(details == null ? View.GONE : View.VISIBLE);
         if (details != null) {
@@ -1741,6 +1748,7 @@ public final class MainActivity extends Activity {
     }
 
     private void onEpisodeDownloadStateChanged(EpisodeDownloadController.State state) {
+        playbackPanel.refreshQueueStatus();
         renderedCatalogEpisodes = Collections.emptyList();
         renderEpisodeDownloadState();
         if (state.getPhase() == EpisodeDownloadController.Phase.ERROR) {
@@ -2132,6 +2140,7 @@ public final class MainActivity extends Activity {
         return new EpisodeListView.Actions() {
             public void open(String id) { loadEpisodeDetails(id); }
             public void play(String id) { playEpisodeRow(id); }
+            public boolean isCurrent(String id) { return playbackPanel.isCurrent(id); }
             public void menu(EpisodeListView.Row row, View anchor) { showEpisodeRowMenu(row, anchor); }
             public EpisodeListView.DownloadState downloadState(EpisodeListView.Row row) {
                 var request=manualDownloads==null?null:manualDownloads.find(row.id());
@@ -2176,6 +2185,7 @@ public final class MainActivity extends Activity {
     private void configureDestinationActions() {
         io.github.jnesew.plainpoddroid.ui.PullRefreshScrollView podcasts = findViewById(R.id.screen_podcasts);
         podcasts.setRefreshAction(refreshAllSubscriptionsButton::isEnabled, () -> refreshAllSubscriptionsButton.performClick());
+        UiWidgets.icon(findViewById(R.id.add_podcast_action), R.drawable.ic_add, getString(R.string.ui_add_podcast), false);
         UiWidgets.icon(findViewById(R.id.search_action), R.drawable.ic_search, getString(R.string.ui_search), false);
         UiWidgets.icon(findViewById(R.id.destination_overflow), R.drawable.ic_more, getString(R.string.ui_more), false);
         findViewById(R.id.podcast_search_controls).setVisibility(appliedPodcastSearch.isEmpty()?View.GONE:View.VISIBLE);
@@ -2189,8 +2199,8 @@ public final class MainActivity extends Activity {
             else { catalogPodcastSearch.setText("");catalogPodcastSearch.clearFocus();input.hideSoftInputFromWindow(catalogPodcastSearch.getWindowToken(),0); }
             updatePodcastSearchIcon();
         });
+        findViewById(R.id.playback_up_next).setOnClickListener(v -> navigationShell.select(Destination.QUEUE));
         findViewById(R.id.destination_overflow).setOnClickListener(this::showDestinationMenu);
-        findViewById(R.id.add_podcast_action).setOnClickListener(v -> navigationShell.addPodcast());
         findViewById(R.id.mini_player_body).setOnClickListener(v -> {
             String id = playbackPanel.currentMediaId();
             if (!id.isEmpty()) loadEpisodeDetails(id);
@@ -2257,7 +2267,6 @@ public final class MainActivity extends Activity {
     private void onDestinationChanged() {
         cancelEpisodeSelection();
         if(batchController!=null)batchController.navigationChanged();
-        if(podcastSettings!=null)podcastSettings.navigationChanged();
         Destination destination = navigationShell.current().destination();
         if (chapterPanel != null) chapterPanel.dismiss();
         if (destination != Destination.QUEUE && queueList != null) queueList.cancelDrag();
@@ -2279,7 +2288,22 @@ public final class MainActivity extends Activity {
             episodeQueueController.refresh();
         }
         refreshRowPlayback();
+        updateDestinationContext();
         notifyCatalogArtworkReady();
+    }
+
+    private void updateDestinationContext() {
+        String title = "";
+        var route = navigationShell.current();
+        if (route.destination() == Destination.PODCAST_EPISODES && catalogBrowserController != null) {
+            for (var podcast : catalogBrowserController.getState().getSubscriptions())
+                if (podcast.getSubscriptionId() == route.podcastId()) { title = displayTitle(podcast.getTitle()); break; }
+        } else if (route.destination() == Destination.EPISODE && episodeActionController != null) {
+            EpisodeDetails details = episodeActionController.getState().getDetails();
+            if (details != null && details.getMediaId().equals(route.episodeId()) && details.getPodcast() != null)
+                title = details.getPodcast().title();
+        }
+        navigationShell.setContextTitle(title);
     }
 
     private void openPodcast(CatalogSubscriptionSummary podcast) {
@@ -2475,7 +2499,6 @@ public final class MainActivity extends Activity {
                 .setPositiveButton(android.R.string.ok, null).show();
     }
 
-    private void showPodcastSpeed(long id){podcastSettings.showPodcastSpeed(id);}
     private void showPodcastLogin(CatalogSubscriptionSummary podcast){podcastSettings.showPodcastLogin(podcast);}
     private void showPodcastSettings(CatalogSubscriptionSummary podcast){podcastSettings.showPodcastSettings(podcast);}
     private boolean isSavingPodcastSettings(){return podcastSettings!=null&&podcastSettings.isSavingAutomaticDownload();}
@@ -2548,8 +2571,6 @@ public final class MainActivity extends Activity {
                 menuAction(popup,R.string.ui_stop_playback,playbackPanel.isConnected()&&!playbackPanel.currentMediaId().isEmpty(),playbackPanel::stopPlayback);
                 menuAction(popup, R.string.ui_playback_options, true, playbackPanel::showOptions);
                 EpisodeDetails details = currentEpisodeDetails();
-                if(details!=null&&details.getPodcast()!=null)menuAction(popup,R.string.ui_podcast_speed,true,
-                        ()->showPodcastSpeed(details.getPodcast().subscriptionId()));
                 menuAction(popup, R.string.ui_episode_information, details != null, () -> {
                     if (details == null) return;
                     String info = (details.getAuthor().isEmpty() ? "" : details.getAuthor() + "\n\n")
@@ -2574,12 +2595,12 @@ public final class MainActivity extends Activity {
             case PODCASTS, ARCHIVES -> {
                 menuAction(popup, R.string.ui_sort_podcasts, true, this::showPodcastOrder);
                 menuAction(popup, R.string.refresh_all_action, refreshAllSubscriptionsButton.isEnabled(), () -> refreshAllSubscriptionsButton.performClick());
-                menuAction(popup, R.string.refresh_all_cancel_action, cancelRefreshAllButton.isEnabled(), () -> cancelRefreshAllButton.performClick());
-                menuAction(popup, R.string.ui_add_podcast, true, navigationShell::addPodcast);
+                if (cancelRefreshAllButton.isEnabled())
+                    menuAction(popup, R.string.refresh_all_cancel_action, true, () -> cancelRefreshAllButton.performClick());
             }
             case QUEUE -> menuAction(popup, R.string.episode_queue_refresh_action, refreshEpisodeQueueButton.isEnabled(), () -> refreshEpisodeQueueButton.performClick());
             case DOWNLOADS, FAVORITES, HISTORY, NEW_EPISODES, IN_PROGRESS -> menuAction(popup, R.string.catalog_refresh_action, true, this::refreshLibraryLists);
-            case SETTINGS, ADD_PODCAST -> menuAction(popup, R.string.ui_about, true, () -> startActivity(new Intent(this, AboutActivity.class)));
+            case SETTINGS, ADD_PODCAST -> { }
         }
         popup.show();
     }

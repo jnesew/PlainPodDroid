@@ -29,6 +29,8 @@ import java.util.Objects;
 final class PlaybackSessionCallback implements MediaSession.Callback {
     interface PlaybackBoundary {
         boolean enforceCurrentPlaylist();
+
+        default void cancelQueueAdvance() { }
     }
 
     interface SleepTimerControl {
@@ -129,6 +131,7 @@ final class PlaybackSessionCallback implements MediaSession.Callback {
 
         if(mediaItems.isEmpty()||mediaItems.size()>io.github.jnesew.plainpoddroid.core.security.SecurityLimits.MAX_QUEUE_ENTRIES)
             return Futures.immediateFailedFuture(new IllegalArgumentException("Invalid playback request."));
+        playbackBoundary.cancelQueueAdvance();
         List<String> mediaIds = new ArrayList<>(mediaItems.size());
         for (MediaItem item : mediaItems) {
             mediaIds.add(item.mediaId);
@@ -137,7 +140,7 @@ final class PlaybackSessionCallback implements MediaSession.Callback {
                 com.google.common.util.concurrent.MoreExecutors.directExecutor());
     }
 
-    private static List<MediaItem> resolvedMediaItems(PlaybackBatchResolution resolution){
+    static List<MediaItem> resolvedMediaItems(PlaybackBatchResolution resolution){
         if(!resolution.isAllowed())throw new IllegalArgumentException(
                 "Playback request blocked: " + resolution.getBlockReason());
         List<MediaItem> resolvedItems = new ArrayList<>(resolution.getSources().size());
@@ -172,6 +175,8 @@ final class PlaybackSessionCallback implements MediaSession.Callback {
             MediaSession session,
             MediaSession.ControllerInfo controller,
             int playerCommand) {
+        // An explicit controller action supersedes a pending natural-end continuation.
+        playbackBoundary.cancelQueueAdvance();
         if ((playerCommand == Player.COMMAND_PLAY_PAUSE
                 || playerCommand == Player.COMMAND_PREPARE)
                 && !playbackBoundary.enforceCurrentPlaylist()) {

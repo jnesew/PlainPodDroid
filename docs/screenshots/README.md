@@ -1,4 +1,4 @@
-# PlainPodDroid screenshots
+# PPodcast screenshots
 
 These are unretouched emulator captures of the app. The library uses fictional
 podcasts, original generated cover artwork and reserved example domains. No

@@ -1,4 +1,6 @@
-# Building PlainPodDroid
+# Building PPodcast
+
+Release versions and Android update codes follow [VERSIONING.md](VERSIONING.md).
 
 ## Required tools
 
@@ -81,8 +83,14 @@ commands to build without accessing the dependency repositories.
 
 The release build remains unsigned at
 `app/build/outputs/apk/release/app-release-unsigned.apk`. The debug APK is
-automatically debug-signed and uses a separate application ID; it cannot update
-an installed release build.
+automatically debug-signed and uses the separate application ID
+`io.github.jnesew.plainpoddroid.debug`. It appears as **PPodcast Debug** and
+installs alongside the release app with its own library, downloads and settings.
+It cannot update an installed release build. Copy the APK at
+`app/build/outputs/apk/debug/app-debug.apk` to the device and open it to install,
+or use `adb -s DEVICE_SERIAL install -r app/build/outputs/apk/debug/app-debug.apk`
+with the serial shown by `adb devices`. The `-r` option preserves an existing
+compatible debug installation's data; it does not touch the release app.
 
 The optional local helper `tools/sign-release-apk.sh --help` describes APK
 preflight and signing with an existing external keystore. Its `--check-only`
