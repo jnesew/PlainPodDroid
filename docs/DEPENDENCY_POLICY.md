@@ -1,4 +1,4 @@
-# PlainPodDroid dependency policy
+# PPodcast dependency policy
 
 Status: mandatory  
 Date: 2026-10-24

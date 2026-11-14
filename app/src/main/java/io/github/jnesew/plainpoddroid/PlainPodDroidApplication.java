@@ -226,7 +226,7 @@ public final class PlainPodDroidApplication extends Application {
         return automaticDownloadScheduler;
     }
 
-    EpisodeQueueStore getEpisodeQueueStore() {
+    public EpisodeQueueStore getEpisodeQueueStore() {
         if (episodeCatalogDatabase == null) {
             throw new IllegalStateException("Application dependencies are not initialized.");
         }

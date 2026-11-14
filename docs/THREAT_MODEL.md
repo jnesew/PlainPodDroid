@@ -1,4 +1,4 @@
-# PlainPodDroid threat model
+# PPodcast threat model
 
 Status: implementation baseline  
 Version: `threat-model-0001`  
@@ -6,7 +6,7 @@ Date: 2026-08-26
 
 ## Security objective
 
-PlainPodDroid must let a user subscribe to, download, and play ordinary audio podcast feeds without giving an untrusted publisher, network endpoint, local application, or build dependency an easy path to:
+PPodcast must let a user subscribe to, download, and play ordinary audio podcast feeds without giving an untrusted publisher, network endpoint, local application, or build dependency an easy path to:
 
 - execute active content;
 - reach services on the user's device or private network;
@@ -107,7 +107,7 @@ failure, or closure; queued closed-view work cannot initiate a later request.
 In-flight requests remain bounded by the existing call timeout. Enrichment
 failure never stops existing playback or changes the audio source.
 
-The app has no embedded browser. Feed text is normalized to inert plain text. The user may explicitly open the canonical episode/site URL in another installed application; PlainPodDroid does not fetch the resulting page.
+The app has no embedded browser. Feed text is normalized to inert plain text. The user may explicitly open the canonical episode/site URL in another installed application; PPodcast does not fetch the resulting page.
 
 ### Playback and download
 

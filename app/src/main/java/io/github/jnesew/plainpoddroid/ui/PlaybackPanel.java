@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import io.github.jnesew.plainpoddroid.PlainPodDroidApplication;
 import io.github.jnesew.plainpoddroid.core.auth.FeedLoginException;
 
 
@@ -60,6 +62,8 @@ public final class PlaybackPanel {
     private boolean episodeVisible, started, scrubbing;
     private View playbackOptions;
     private AlertDialog optionsDialog;
+    private PodcastSpeedPanel podcastSpeedPanel;
+    private PlaybackQueueStatusPanel queueStatusPanel;
     private final Runnable positionRefresher = this::tickPositions;
     private Button playbackToggleButton;
     private Button playbackStopButton;
@@ -631,7 +635,7 @@ public final class PlaybackPanel {
     private final PlaybackActions actions;
 
     public PlaybackPanel(Activity activity, Handler handler,
-            PlaybackPrivacySettings privacy, Runnable playbackChanged) {
+            PlaybackPrivacySettings privacy, Runnable playbackChanged, Executor worker) {
         this.activity = activity;
         this.mainHandler = handler;
         this.playbackPrivacySettings = privacy;
@@ -655,16 +659,23 @@ public final class PlaybackPanel {
         actions = new PlaybackActions(new ControllerPort());
         configurePlaybackUi();
         configurePlaybackSkipSettingsUi();
+        var application = (PlainPodDroidApplication) activity.getApplication();
+        podcastSpeedPanel = new PodcastSpeedPanel(playbackOptions, application.getPodcastPlaybackSettingsStore(),
+                playbackControlSettings, worker, mainHandler);
+        queueStatusPanel = new PlaybackQueueStatusPanel(activity.findViewById(R.id.root), worker, mainHandler,
+                new io.github.jnesew.plainpoddroid.core.playback.PlaybackQueueStatusReader(
+                        application.getEpisodeQueueStore(), application.getPlaybackDownloadStore(), privacy));
     }
 
-    public void start() { started = true; connection.start(); tickPositions(); }
+    public void start() { started = true; queueStatusPanel.start(); connection.start(); tickPositions(); }
     public void stop() {
-        started = false; mainHandler.removeCallbacks(positionRefresher);
+        started = false; queueStatusPanel.stop(); mainHandler.removeCallbacks(positionRefresher);
         connection.stop();
         if (optionsDialog != null) optionsDialog.dismiss();
     }
     public boolean isConnected() { return connection.getConnected() != null; }
     public void resume() {
+        refreshQueueStatus();
         refreshPlaybackSkipSettings();
         requestSleepTimerStatus();
     }
@@ -714,6 +725,11 @@ public final class PlaybackPanel {
         return controller != null && mediaId.equals(currentMediaId()) && controller.getPlayWhenReady()
                 && controller.getPlaybackState() != Player.STATE_IDLE && controller.getPlaybackState() != Player.STATE_ENDED;
     }
+    public boolean isCurrent(String mediaId) {
+        MediaController controller = connection.getConnected();
+        return controller != null && mediaId.equals(currentMediaId())
+                && controller.getPlaybackState() != Player.STATE_IDLE && controller.getPlaybackState() != Player.STATE_ENDED;
+    }
     public void toggleCurrent() { togglePlayback(); }
     public void setEpisodeVisible(boolean visible) { episodeVisible = visible; renderChrome(); }
     public void bindEpisode(EpisodeDetails details) {
@@ -721,13 +737,19 @@ public final class PlaybackPanel {
         selectedEpisode = details; renderChrome();
     }
     public void showOptions() {
+        var podcast = selectedEpisode == null ? null : selectedEpisode.getPodcast();
+        showOptionsForPodcast(podcast == null ? 0L : podcast.subscriptionId());
+    }
+    public void showOptionsForPodcast(long id) {
         if (optionsDialog != null && optionsDialog.isShowing()) return;
+        podcastSpeedPanel.open(id);
         ViewGroup owner = (ViewGroup) playbackOptions.getParent();
         owner.removeView(playbackOptions); playbackOptions.setVisibility(View.VISIBLE);
         android.widget.ScrollView scroll = new android.widget.ScrollView(activity); scroll.addView(playbackOptions);
         optionsDialog = new AlertDialog.Builder(activity).setTitle(R.string.ui_playback_options)
                 .setView(scroll).setPositiveButton(android.R.string.ok, null).create();
         optionsDialog.setOnDismissListener(dialog -> {
+            podcastSpeedPanel.close();
             ViewGroup parent = (ViewGroup) playbackOptions.getParent();
             if (parent != null) parent.removeView(playbackOptions);
             playbackOptions.setVisibility(View.GONE); owner.addView(playbackOptions);
@@ -739,12 +761,14 @@ public final class PlaybackPanel {
         return selectedEpisode != null && selectedEpisode.getMediaId().equals(currentMediaId());
     }
     private void renderChrome() {
+        updateQueueStatus();
         if (miniPlayer == null) return;
         MediaController controller = connection.getConnected();
         MediaItem item = controller == null ? null : controller.getCurrentMediaItem();
         if (playbackStatus != null) playbackStatus.setVisibility(episodeVisible && isSelectedCurrent()
                 && controller != null && controller.getPlayerError() != null ? View.VISIBLE : View.GONE);
-        miniPlayer.setVisibility(item != null && !episodeVisible ? View.VISIBLE : View.GONE);
+        miniPlayer.setVisibility(item != null && (!episodeVisible || !isSelectedCurrent())
+                ? View.VISIBLE : View.GONE);
         if (item != null) {
             miniTitle.setText(playbackTitle(item.mediaMetadata));
             activity.findViewById(R.id.mini_player_body).setContentDescription(activity.getString(
@@ -752,10 +776,24 @@ public final class PlaybackPanel {
         }
         renderPositions();
     }
+    public void refreshQueueStatus() {
+        if (queueStatusPanel != null) queueStatusPanel.invalidate();
+    }
+    private void updateQueueStatus() {
+        if (queueStatusPanel == null) return;
+        MediaController controller = connection.getConnected();
+        MediaItem item = controller == null ? null : controller.getCurrentMediaItem();
+        queueStatusPanel.update(item == null ? "" : item.mediaId, item == null ? "" : playbackTitle(item.mediaMetadata),
+                controller != null && controller.getPlaybackState() == Player.STATE_BUFFERING && controller.getPlayWhenReady(),
+                controller != null && controller.getPlaybackState() == Player.STATE_ENDED,
+                controller != null && controller.getPlayerError() != null,
+                controller == null ? 0L : controller.getCurrentPosition(),
+                controller == null || controller.getPlaybackState() == Player.STATE_IDLE ? -1L : controller.getDuration());
+    }
     private void tickPositions() {
         mainHandler.removeCallbacks(positionRefresher);
         if (!started) return;
-        renderPositions(); mainHandler.postDelayed(positionRefresher, 500L);
+        renderPositions(); updateQueueStatus(); mainHandler.postDelayed(positionRefresher, 500L);
     }
     private void renderPositions() {
         if (episodeSeek == null) return;

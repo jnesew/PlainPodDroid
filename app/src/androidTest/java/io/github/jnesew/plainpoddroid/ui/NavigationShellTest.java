@@ -61,10 +61,14 @@ public final class NavigationShellTest extends InstrumentationTestCase {
             shell.select(Destination.QUEUE);
             root.findViewById(R.id.navigation_action).performClick();root.findViewById(R.id.nav_about).performClick();
             assertEquals(1,about);assertEquals(Destination.QUEUE,shell.current().destination());
-            root.findViewById(R.id.navigation_action).performClick();root.findViewById(R.id.nav_add_podcast).performClick();
+            assertEquals(View.GONE,root.findViewById(R.id.add_podcast_action).getVisibility());
+            shell.select(Destination.PODCASTS);
+            assertEquals(View.VISIBLE,root.findViewById(R.id.add_podcast_action).getVisibility());
+            root.findViewById(R.id.add_podcast_action).performClick();
+            assertEquals(View.GONE,root.findViewById(R.id.add_podcast_action).getVisibility());
             assertEquals(View.GONE,root.findViewById(R.id.navigation_drawer).getVisibility());
             assertEquals(Destination.ADD_PODCAST,shell.current().destination());shell.back();
-            assertEquals(Destination.QUEUE,shell.current().destination());
+            assertEquals(Destination.PODCASTS,shell.current().destination());
         });
     }
     public void testEpisodeBackAndSavedNavigationKeepTheOrigin() {

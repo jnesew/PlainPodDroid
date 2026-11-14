@@ -9,4 +9,5 @@
     <color name="accent_soft">#E0F0F0</color>
     <color name="divider">#DCE2E5</color>
     <color name="icon_background">#FF315C49</color>
+    <color name="queue_current_background">#E1F2E8</color>
 </resources>

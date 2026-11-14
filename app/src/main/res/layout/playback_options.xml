@@ -1,7 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/playback_options" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp" android:visibility="gone">
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:labelFor="@id/playback_speed" android:text="@string/playback_speed_label" android:textColor="@color/text_secondary" android:textSize="15sp" />
-    <Spinner android:id="@+id/playback_speed" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:prompt="@string/playback_speed_label" />
+    <LinearLayout android:id="@+id/podcast_speed_controls" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:labelFor="@id/podcast_speed_choice" android:text="@string/ui_speed_for_podcast" android:textColor="@color/text_secondary" android:textSize="15sp" />
+        <Spinner android:id="@+id/podcast_speed_choice" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:prompt="@string/ui_speed_for_podcast" />
+        <TextView android:id="@+id/podcast_speed_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone" android:accessibilityLiveRegion="polite" android:textColor="@color/text_secondary" android:textSize="15sp" />
+    </LinearLayout>
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:labelFor="@id/playback_sleep_timer_option" android:text="@string/playback_sleep_timer_label" android:textColor="@color/text_secondary" android:textSize="15sp" />
     <Spinner android:id="@+id/playback_sleep_timer_option" android:layout_width="match_parent" android:layout_height="wrap_content" android:enabled="false" android:minHeight="48dp" android:prompt="@string/playback_sleep_timer_label" />
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:orientation="horizontal">

@@ -33,11 +33,12 @@ public final class EpisodeListView {
         void menu(Row row, View anchor);
         void move(String id, int position);
         boolean canMove();
+        default boolean isCurrent(String id) { return false; }
         default DownloadState downloadState(Row row) { return row.downloaded()?DownloadState.COMPLETE:DownloadState.AVAILABLE; }
         default void download(Row row, View anchor) { }
         default void bulk(List<Row> rows,EpisodeBatchRequest.Action action) { }
     }
-    private record Binding(Row data,LinearLayout row,Button play,Button download,TextView downloadStatus,ImageView art,CheckBox check,View grip) { }
+    private record Binding(Row data,LinearLayout row,Button play,Button download,TextView downloadStatus,ImageView art,CheckBox check,View grip, boolean queue) { }
     private final Context context;
     private final LinearLayout rows;
     private final ArtworkThumbnailLoader artwork;
@@ -161,7 +162,7 @@ public final class EpisodeListView {
         View line=new View(context);line.setBackgroundColor(context.getColor(R.color.divider));
         container.addView(line,new LinearLayout.LayoutParams(-1,UiWidgets.dp(context,1)));
         rows.addView(container,new LinearLayout.LayoutParams(-1,-2));
-        bindings.add(new Binding(data,row,play,download,downloadStatus,image,check,grip));
+        bindings.add(new Binding(data,row,play,download,downloadStatus,image,check,grip,queue));
         if(queue)drag.add(data.id(),data.title(),data.queuePosition(),container,grip);
     }
     private TextView label(String text,int size,boolean bold,int lines) {
@@ -189,7 +190,16 @@ public final class EpisodeListView {
             boolean active=playing.test(b.data().id());
             boolean checked=selected.contains(b.data().id());
             b.check().setVisibility(selectionMode==null?View.GONE:View.VISIBLE);b.check().setChecked(checked);
-            b.row().setSelected(checked);b.row().setBackgroundResource(checked||active?R.drawable.button_surface:0);
+            boolean current = b.queue() && actions.isCurrent(b.data().id());
+            b.row().setSelected(checked); b.row().setActivated(current);
+            b.row().setBackgroundResource(current ? R.drawable.queue_current_surface
+                    : checked || !b.queue() && active ? R.drawable.button_surface : 0);
+            View body = b.row().findViewById(R.id.episode_row_body);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                body.setStateDescription(current ? context.getString(R.string.ui_current_episode_state) : null);
+            } else {
+                body.setContentDescription(current ? context.getString(R.string.ui_current_episode_accessibility, b.data().title()) : null);
+            }
             if(b.grip()!=null)b.grip().setVisibility(selectionMode==null?View.VISIBLE:View.GONE);
             if(b.download()!=null){
                 DownloadState state=actions.downloadState(b.data());

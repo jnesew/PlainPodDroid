@@ -1,4 +1,4 @@
-# PlainPodDroid quantitative security limits
+# PPodcast quantitative security limits
 
 Status: mandatory implementation defaults  
 Version: `limits-0005`

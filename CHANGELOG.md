@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.0-rc.2 — 2026-11-14 — prepared for device testing
+
+The app is now named PPodcast, keeping the same application ID and user data.
+Debug builds have a separate PPodcast Debug label and install alongside it.
+
+Fixed saved-queue autoplay, including Download before playing, while preserving
+Offline mode and sleep-timer limits. Audio focus now pauses speech for other
+media and temporary interruptions, with resumption only when appropriate.
+
+Simplified Add podcast, navigation icons and playback speed/sleep controls.
+Separated Episode favorite/queue highlights and highlighted the current queue
+item with a theme-appropriate accent. Ordinary Up next hints appear near the end;
+action-required warnings remain immediate and empty queues stay quiet.
+
+See [candidate release notes](docs/release-notes/1.0.0-rc.2.md) and the
+[versioning scheme](docs/VERSIONING.md). Physical-device acceptance is pending.
+
 ## 1.0.0-rc.1 — prepared, not published
 
 The first release candidate includes RSS and Apple-link subscriptions, OPML

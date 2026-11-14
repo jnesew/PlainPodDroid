@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/screen_queue" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:visibility="gone" android:clipToPadding="false">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+        <TextView android:id="@+id/queue_playback_warning" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:textColor="@color/text_secondary" android:textSize="15sp" android:accessibilityLiveRegion="polite" android:visibility="gone" />
         <ProgressBar android:id="@+id/episode_queue_progress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:indeterminate="true" android:visibility="gone" />
         <TextView android:id="@+id/episode_queue_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:accessibilityLiveRegion="polite" android:text="@string/episode_queue_status_idle" android:textColor="@color/text_secondary" android:textSize="15sp" />
         <LinearLayout android:id="@+id/episode_queue_entries" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
