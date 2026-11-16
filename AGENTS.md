@@ -118,7 +118,7 @@ Security changes require negative cases alongside neighboring positive cases;
 database changes need executable SQL/migration coverage.
 
 Host/JVM checks, Android test compilation, emulator execution and physical
-GrapheneOS acceptance are distinct evidence. Do not claim unexecuted tests
+Android device acceptance are distinct evidence. Do not claim unexecuted tests
 passed. Record unavailable device checks; missing hardware does not stop useful
 local work, but final device acceptance remains required before public launch.
 Use synthetic fixtures; do not fuzz publishers or retain real private feeds in
@@ -126,8 +126,8 @@ tests, screenshots or logs.
 
 ## Product, security and platform invariants
 
-- Native, audio-focused, single-device and account-free. Run on stock
-  Android-derived systems, including GrapheneOS, without Google Play Services.
+- Native, audio-focused, single-device and account-free. Run on supported
+  Android systems without requiring Google Play Services.
   No sync, cloud state, social layer or remote control plane.
 - Java 17/framework Views, one SQLite transaction facade and bounded worker
   ownership. Separate browsing/navigation from acquisition and playback.

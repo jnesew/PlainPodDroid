@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.0.0 — 2026-11-16
+
+First stable version of PPodcast, a focused audio podcast player for Android 10
+and newer. Add shows by RSS address or Apple Podcasts link, move subscriptions
+with OPML, stream or download episodes, and build a listening queue. Chapters,
+per-show speed, skip controls, sleep timers, scheduled downloads, favorites and
+listening history round out everyday playback. Offline mode stops app networking.
+
+Includes the queue-autoplay and audio-focus fixes, simpler playback controls,
+near-end Up next hints and theme-aware current-episode highlighting tested in
+the previews. Updates retain existing libraries and settings under the same
+application ID. Android version code: 4.
+
+See the [1.0.0 release notes](docs/release-notes/1.0.0.md).
+
 ## 1.0.0-rc.2 — 2026-11-14 — prepared for device testing
 
 The app is now named PPodcast, keeping the same application ID and user data.

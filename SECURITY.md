@@ -14,8 +14,8 @@ A private report should include:
 - Steps to reproduce using synthetic feeds or other non-sensitive fixtures.
 - The expected behavior, observed behavior and potential impact.
 
-The first signed release is being prepared. For development builds, include the
-source commit so the maintainer can identify the affected code.
+For development builds, include the source commit so the maintainer can identify
+the affected code.
 
 The public [threat model](docs/THREAT_MODEL.md),
 [input and resource limits](docs/SECURITY_LIMITS.md), and

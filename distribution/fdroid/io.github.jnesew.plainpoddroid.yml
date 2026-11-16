@@ -13,12 +13,12 @@ MaintainerNotes: |-
   Release preparation generates a build entry pinned to its exact source commit.
   The Gradle properties file owns versionName/versionCode.
   Build requirements: JDK 17, Platform 37.0, Build Tools 36.0.0, Gradle 9.6.0.
-  APK output is unsigned; no signing configuration or Google services are needed.
+  APK output is unsigned; no signing configuration is needed.
   Upstream developer-signature reuse requires independent reproducible-build
   verification and a real AllowedAPKSigningKeys fingerprint before submission.
 Builds: []
 AutoUpdateMode: None
 UpdateCheckMode: 'Tags ^v[0-9]+\.[0-9]+\.[0-9]+$'
 UpdateCheckData: 'gradle.properties|plainPodDroidVersionCode=([0-9]+)|.|plainPodDroidVersionName=(.*)'
-CurrentVersion: 1.0.0-rc.2
-CurrentVersionCode: 3
+CurrentVersion: 1.0.0
+CurrentVersionCode: 4

@@ -10,7 +10,7 @@ Release versions and Android update codes follow [VERSIONING.md](VERSIONING.md).
 - A POSIX shell for `gradlew` (or `gradlew.bat` on Windows).
 - Bash and `curl` only when using the optional toolchain bootstrap helper.
 
-Android Studio and Google Play Services are not required. Point `ANDROID_HOME` or `ANDROID_SDK_ROOT` at the SDK; do not commit `local.properties`.
+Android Studio is not required. Point `ANDROID_HOME` or `ANDROID_SDK_ROOT` at the SDK; do not commit `local.properties`.
 
 ## Local SDK setup
 

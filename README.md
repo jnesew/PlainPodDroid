@@ -1,8 +1,8 @@
 # PPodcast
 
 Podcasts, kept simple. Follow your shows, build a listening queue, stream episodes
-or download them for later. PPodcast works on Android 10 and newer, including
-GrapheneOS, without Google Play Services.
+or download them for later. PPodcast is a focused audio podcast player for
+Android 10 and newer.
 
 ## Make it your own
 
@@ -40,8 +40,8 @@ artwork. See the [full screenshot set](docs/screenshots/README.md), including da
 
 ## Install and update
 
-The first signed release is being prepared. Once it is available, download the
-APK from [GitHub Releases](https://github.com/jnesew/PlainPodDroid/releases), or
+Download a signed APK from
+[GitHub Releases](https://github.com/jnesew/PlainPodDroid/releases), or
 [add PPodcast to Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22io.github.jnesew.plainpoddroid%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fjnesew%2FPlainPodDroid%22%2C%22author%22%3A%22jnesew%22%2C%22name%22%3A%22PPodcast%22%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22%5EPlainPodDroid-%5B0-9%5D%2B%5C%5C%5C%5C.%5B0-9%5D%2B%5C%5C%5C%5C.%5B0-9%5D%2B%5C%5C%5C%5C.apk%24%5C%22%2C%5C%22autoApkFilterByArch%5C%22%3Afalse%7D%22%7D) to follow stable releases.
 You can also paste `https://github.com/jnesew/PlainPodDroid` into Obtainium.
 PPodcast was previously named PlainPodDroid; existing download filenames and
@@ -70,6 +70,8 @@ passwords, audio downloads or listening history.
 PPodcast plays HTTPS audio podcasts. Some paid or platform-only shows do not
 provide a usable RSS feed. Public RSS feeds and supported private feed links can
 be added; feeds that require a login support HTTPS Basic authentication.
+
+Google Play Services are not required.
 
 There is no podcast directory or cross-device sync. Use an RSS/Apple link from a
 source you trust, or import your existing subscriptions.
